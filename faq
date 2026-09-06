@@ -1,0 +1,499 @@
+You are given a task to integrate an existing React component in the codebase
+
+The codebase should support:
+- shadcn project structure
+    - Tailwind CSS
+        - Typescript
+
+If it doesn't, provide instructions on how to setup project via shadcn CLI, install Tailwind or Typescript.
+
+Determine the default path for components and styles. 
+If default path for components is not / components / ui, provide instructions on why it's important to create this folder
+Copy - paste this component to / components / ui folder:
+```tsx
+faq3.tsx
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+interface FaqItem {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+interface Faq3Props {
+  heading: string;
+  description: string;
+  items?: FaqItem[];
+}
+
+const faqItems = [
+  {
+    id: "faq-1",
+    question: "What is a FAQ?",
+    answer:
+      "A FAQ is a list of frequently asked questions and answers on a particular topic.",
+  },
+  {
+    id: "faq-2",
+    question: "What is the purpose of a FAQ?",
+    answer:
+      "The purpose of a FAQ is to provide answers to common questions and help users find the information they need quickly and easily.",
+  },
+  {
+    id: "faq-3",
+    question: "How do I create a FAQ?",
+    answer:
+      "To create a FAQ, you need to compile a list of common questions and answers on a particular topic and organize them in a clear and easy-to-navigate format.",
+  },
+  {
+    id: "faq-4",
+    question: "What are the benefits of a FAQ?",
+    answer:
+      "The benefits of a FAQ include providing quick and easy access to information, reducing the number of support requests, and improving the overall user experience.",
+  },
+  {
+    id: "faq-5",
+    question: "How should I organize my FAQ?",
+    answer:
+      "You should organize your FAQ in a logical manner, grouping related questions together and ordering them from most basic to more advanced topics.",
+  },
+  {
+    id: "faq-6",
+    question: "How long should FAQ answers be?",
+    answer:
+      "FAQ answers should be concise and to the point, typically a few sentences or a short paragraph is sufficient for most questions.",
+  }
+];
+
+const Faq3 = ({
+  heading = "Frequently asked questions",
+  description = "Find answers to common questions about our products. Can't find what you're looking for? Contact our support team.",
+  items = faqItems,
+}: Faq3Props) => {
+  return (
+    <section className="py-32">
+      <div className="container space-y-16">
+        <div className="mx-auto flex max-w-3xl flex-col text-left md:text-center">
+          <h2 className="mb-3 text-3xl font-semibold md:mb-4 lg:mb-6 lg:text-4xl">
+            {heading}
+          </h2>
+          <p className="text-muted-foreground lg:text-lg">{description}</p>
+        </div>
+        <Accordion
+          type="single"
+          collapsible
+          className="mx-auto w-full lg:max-w-3xl"
+        >
+          {items.map((item) => (
+            <AccordionItem key={item.id} value={item.id}>
+              <AccordionTrigger className="transition-opacity duration-200 hover:no-underline hover:opacity-60">
+                <div className="font-medium sm:py-1 lg:py-2 lg:text-lg">
+                  {item.question}
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="sm:mb-1 lg:mb-2">
+                <div className="text-muted-foreground lg:text-lg">
+                  {item.answer}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </section>
+  );
+};
+
+export { Faq3 };
+
+
+demo.tsx
+import { Faq3 } from "@/components/blocks/faq3"
+
+const demoData = {
+  heading: "Frequently asked questions",
+  description: "Find answers to common questions about our products. Can't find what you're looking for? Contact our support team.",
+  items: [
+    {
+      id: "faq-1",
+      question: "What is a FAQ?",
+      answer:
+        "A FAQ is a list of frequently asked questions and answers on a particular topic.",
+    },
+    {
+      id: "faq-2",
+      question: "What is the purpose of a FAQ?",
+      answer:
+        "The purpose of a FAQ is to provide answers to common questions and help users find the information they need quickly and easily.",
+    },
+    {
+      id: "faq-3",
+      question: "How do I create a FAQ?",
+      answer:
+        "To create a FAQ, you need to compile a list of common questions and answers on a particular topic and organize them in a clear and easy-to-navigate format.",
+    },
+    {
+      id: "faq-4",
+      question: "What are the benefits of a FAQ?",
+      answer:
+        "The benefits of a FAQ include providing quick and easy access to information, reducing the number of support requests, and improving the overall user experience.",
+    },
+    {
+      id: "faq-5",
+      question: "How should I organize my FAQ?",
+      answer:
+        "You should organize your FAQ in a logical manner, grouping related questions together and ordering them from most basic to more advanced topics.",
+    },
+    {
+      id: "faq-6",
+      question: "How long should FAQ answers be?",
+      answer:
+        "FAQ answers should be concise and to the point, typically a few sentences or a short paragraph is sufficient for most questions.",
+    },
+    {
+      id: "faq-7",
+      question: "Should I include links in my FAQ?",
+      answer:
+        "Yes, including links to more detailed information or related resources can be very helpful for users who want to learn more about a particular topic.",
+    },
+  ]
+};
+
+function Faq3Demo() {
+  return <Faq3 {...demoData} />;
+}
+
+export { Faq3Demo };
+
+```
+
+Copy - paste these files for dependencies:
+    ```tsx
+shadcn/accordion
+"use client"
+
+import * as React from "react"
+import * as AccordionPrimitive from "@radix-ui/react-accordion"
+import { ChevronDown } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+
+const Accordion = AccordionPrimitive.Root
+
+const AccordionItem = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Item>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
+>(({ className, ...props }, ref) => (
+  <AccordionPrimitive.Item
+    ref={ref}
+    className={cn("border-b", className)}
+    {...props}
+  />
+))
+AccordionItem.displayName = "AccordionItem"
+
+const AccordionTrigger = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
+>(({ className, children, ...props }, ref) => (
+  <AccordionPrimitive.Header className="flex">
+    <AccordionPrimitive.Trigger
+      ref={ref}
+      className={cn(
+        "flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline [&[data-state=open]>svg]:rotate-180",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+    </AccordionPrimitive.Trigger>
+  </AccordionPrimitive.Header>
+))
+AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
+
+const AccordionContent = React.forwardRef<
+  React.ElementRef<typeof AccordionPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <AccordionPrimitive.Content
+    ref={ref}
+    className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+    {...props}
+  >
+    <div className={cn("pb-4 pt-0", className)}>{children}</div>
+  </AccordionPrimitive.Content>
+))
+
+AccordionContent.displayName = AccordionPrimitive.Content.displayName
+
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+
+```
+        ```tsx
+shadcn/avatar
+"use client"
+
+import * as React from "react"
+import * as AvatarPrimitive from "@radix-ui/react-avatar"
+
+import { cn } from "@/lib/utils"
+
+const Avatar = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Root
+    ref={ref}
+    className={cn(
+      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
+      className,
+    )}
+    {...props}
+  />
+))
+Avatar.displayName = AvatarPrimitive.Root.displayName
+
+const AvatarImage = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Image>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Image
+    ref={ref}
+    className={cn("aspect-square h-full w-full", className)}
+    {...props}
+  />
+))
+AvatarImage.displayName = AvatarPrimitive.Image.displayName
+
+const AvatarFallback = React.forwardRef<
+  React.ElementRef<typeof AvatarPrimitive.Fallback>,
+  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
+>(({ className, ...props }, ref) => (
+  <AvatarPrimitive.Fallback
+    ref={ref}
+    className={cn(
+      "flex h-full w-full items-center justify-center rounded-full bg-muted",
+      className,
+    )}
+    {...props}
+  />
+))
+AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
+
+export { Avatar, AvatarImage, AvatarFallback }
+
+```
+        ```tsx
+shadcn/button
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  },
+)
+
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  },
+)
+Button.displayName = "Button"
+
+export { Button, buttonVariants }
+
+```
+
+Install NPM dependencies:
+```bash
+lucide-react, @radix-ui/react-accordion, @radix-ui/react-avatar, @radix-ui/react-slot, class-variance-authority
+```
+
+Extend existing tailwind.config.js with this code:
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  theme: {
+    extend: {
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+}
+```
+
+Implementation Guidelines
+1. Analyze the component structure and identify all required dependencies
+2. Review the component's argumens and state
+3. Identify any required context providers or hooks and install them
+4. Questions to Ask
+    - What data / props will be passed to this component ?
+        - Are there any specific state management requirements ?
+            - Are there any required assets(images, icons, etc.) ?
+                - What is the expected responsive behavior ?
+                    - What is the best place to use this component in the app ?
+
+                        Steps to integrate
+0. Copy paste all the code above in the correct directories
+1. Install external dependencies
+2. Fill image assets with Unsplash stock images you know exist
+3. Use lucide - react icons for svgs or logos if component requires them
+    ,
+    code - 
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion";
+
+interface FaqItem {
+    id: string;
+    question: string;
+    answer: string;
+}
+
+interface Faq3Props {
+    heading: string;
+    description: string;
+    items?: FaqItem[];
+}
+
+const faqItems = [
+    {
+        id: "faq-1",
+        question: "What is a FAQ?",
+        answer:
+            "A FAQ is a list of frequently asked questions and answers on a particular topic.",
+    },
+    {
+        id: "faq-2",
+        question: "What is the purpose of a FAQ?",
+        answer:
+            "The purpose of a FAQ is to provide answers to common questions and help users find the information they need quickly and easily.",
+    },
+    {
+        id: "faq-3",
+        question: "How do I create a FAQ?",
+        answer:
+            "To create a FAQ, you need to compile a list of common questions and answers on a particular topic and organize them in a clear and easy-to-navigate format.",
+    },
+    {
+        id: "faq-4",
+        question: "What are the benefits of a FAQ?",
+        answer:
+            "The benefits of a FAQ include providing quick and easy access to information, reducing the number of support requests, and improving the overall user experience.",
+    },
+    {
+        id: "faq-5",
+        question: "How should I organize my FAQ?",
+        answer:
+            "You should organize your FAQ in a logical manner, grouping related questions together and ordering them from most basic to more advanced topics.",
+    },
+    {
+        id: "faq-6",
+        question: "How long should FAQ answers be?",
+        answer:
+            "FAQ answers should be concise and to the point, typically a few sentences or a short paragraph is sufficient for most questions.",
+    }
+];
+
+const Faq3 = ({
+    heading = "Frequently asked questions",
+    description = "Find answers to common questions about our products. Can't find what you're looking for? Contact our support team.",
+    items = faqItems,
+}: Faq3Props) => {
+    return (
+        <section className="py-32">
+            <div className="container space-y-16">
+                <div className="mx-auto flex max-w-3xl flex-col text-left md:text-center">
+                    <h2 className="mb-3 text-3xl font-semibold md:mb-4 lg:mb-6 lg:text-4xl">
+                        {heading}
+                    </h2>
+                    <p className="text-muted-foreground lg:text-lg">{description}</p>
+                </div>
+                <Accordion
+                    type="single"
+                    collapsible
+                    className="mx-auto w-full lg:max-w-3xl"
+                >
+                    {items.map((item) => (
+                        <AccordionItem key={item.id} value={item.id}>
+                            <AccordionTrigger className="transition-opacity duration-200 hover:no-underline hover:opacity-60">
+                                <div className="font-medium sm:py-1 lg:py-2 lg:text-lg">
+                                    {item.question}
+                                </div>
+                            </AccordionTrigger>
+                            <AccordionContent className="sm:mb-1 lg:mb-2">
+                                <div className="text-muted-foreground lg:text-lg">
+                                    {item.answer}
+                                </div>
+                            </AccordionContent>
+                        </AccordionItem>
+                    ))}
+                </Accordion>
+            </div>
+        </section>
+    );
+};
+
+export { Faq3 };
+
