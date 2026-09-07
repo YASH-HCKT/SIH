@@ -380,10 +380,9 @@ export default function IpSaktiAssistant() {
   }, [messages, scrollToBottom])
 
   const handleSubmit = React.useCallback(
-    (value: string) => {
+    async (value: string) => {
       if (!value.trim() || isLoading) return
 
-      // Add user message
       const userMessage: Message = {
         id: `msg-${Date.now()}`,
         role: 'user',
@@ -391,57 +390,88 @@ export default function IpSaktiAssistant() {
         timestamp: new Date(),
       }
 
-      setMessages(prev => [...prev, userMessage])
+      const aiMsgId = `msg-${Date.now()}-ai`
+      const assistantMessagePlaceholder: Message = {
+        id: aiMsgId,
+        role: 'assistant',
+        content: '',
+        citations: [],
+        timestamp: new Date(),
+      }
+
+      const currentHistory = [...messages]
+
+      setMessages(prev => [...prev, userMessage, assistantMessagePlaceholder])
       setInputValue('')
       setStatus('loading')
       setIsLoading(true)
 
-      // Simulate AI response delay
-      const responseTimer = window.setTimeout(() => {
-        const responses: Record<string, string> = {
-          patent: 'To file a patent for your Ayurvedic formulation, you\'ll need to document the composition, preparation method, and benefits. The application should follow WIPO guidelines and include prior art search documentation.',
-          trademark: 'Trademark registration for Ayurveda brands requires: (1) Unique brand name, (2) Logo/design, (3) Goods/services classification, (4) Use evidence. Processing time: 18-24 months in India.',
-          gi: 'Geographical Indications protect traditional products from specific regions. For Ayurvedic products, GI registration requires proof of traditional knowledge and unique characteristics tied to the region.',
-          regulatory: 'AYUSH regulations in India classify Ayurvedic products into different schedules. Export requires compliance with destination country regulations (FDA for US, MHRA for UK, EU directives for Europe).',
-          default: 'I can help you with IP protection for your Ayurvedic products. Please ask about patents, trademarks, geographical indications, or regulatory requirements.',
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: value,
+            history: currentHistory.map(m => ({ role: m.role, content: m.content })),
+          }),
+        })
+
+        if (!response.ok || !response.body) {
+          throw new Error('Failed to fetch AI response')
         }
 
-        let response = responses.default
-        const lowerInput = value.toLowerCase()
-
-        if (lowerInput.includes('patent')) response = responses.patent
-        else if (lowerInput.includes('trademark') || lowerInput.includes('brand'))
-          response = responses.trademark
-        else if (lowerInput.includes('gi') || lowerInput.includes('geographical'))
-          response = responses.gi
-        else if (lowerInput.includes('regulat') || lowerInput.includes('compliance'))
-          response = responses.regulatory
-
-        const assistantMessage: Message = {
-          id: `msg-${Date.now()}-ai`,
-          role: 'assistant',
-          content: response,
-          citations: [
-            'AYUSH Ministry Guidelines - Ayurvedic Product Classification (2023)',
-            'WIPO Patent Cooperation Treaty - Traditional Knowledge Database',
-          ],
-          timestamp: new Date(),
+        const citationsHeader = response.headers.get('X-Citations')
+        let citations: string[] = []
+        if (citationsHeader) {
+          try {
+            citations = JSON.parse(citationsHeader)
+          } catch {
+            citations = []
+          }
         }
 
-        setMessages(prev => [...prev, assistantMessage])
+        const reader = response.body.getReader()
+        const decoder = new TextDecoder()
+        let accumulatedContent = ''
+
+        while (true) {
+          const { done, value: chunk } = await reader.read()
+          if (done) break
+          accumulatedContent += decoder.decode(chunk, { stream: true })
+
+          setMessages(prev =>
+            prev.map(msg =>
+              msg.id === aiMsgId
+                ? { ...msg, content: accumulatedContent, citations }
+                : msg
+            )
+          )
+        }
+
         setStatus('success')
-
         const idleTimer = window.setTimeout(() => {
           setStatus('idle')
           setIsLoading(false)
         }, 900)
-
         timersRef.current.push(idleTimer)
-      }, 1400)
-
-      timersRef.current.push(responseTimer)
+      } catch (error) {
+        console.error('API call error:', error)
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === aiMsgId
+              ? {
+                  ...msg,
+                  content:
+                    'Sorry, I encountered an error connecting to the assistant. Please try again.',
+                }
+              : msg
+          )
+        )
+        setStatus('idle')
+        setIsLoading(false)
+      }
     },
-    [isLoading]
+    [isLoading, messages]
   )
 
   return (
