@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import Link from 'next/link';
+import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
 
 const navItems = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Features", href: "/features" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "Team", href: "/team" },
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
+  { label: 'Features', href: '/features' },
+  { label: 'How It Works', href: '/how-it-works' },
+  { label: 'Team', href: '/team' },
 ];
 
 export const Navbar = () => {
@@ -19,13 +19,9 @@ export const Navbar = () => {
     <nav className="fixed w-full bg-black/80 backdrop-blur-md z-50 border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">IP</span>
-            </div>
-            <span className="text-white font-bold text-lg hidden sm:inline">IP-SAKTI</span>
+          <Link href="/" className="flex items-center">
+            <span className="text-emerald-950 font-semibold tracking-tight">IP-SAKTI</span>
           </Link>
 
           {/* Desktop Navigation */}

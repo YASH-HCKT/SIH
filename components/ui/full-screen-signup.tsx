@@ -1,63 +1,63 @@
-"use client";
+'use client';
 
-import { SunIcon as Sunburst, Check, ChevronDown } from "lucide-react";
-import React, { useState } from "react";
-import Link from "next/link";
+import { Check, ChevronDown, Leaf, ShieldCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import Link from 'next/link';
 
 export const USER_TYPES = [
-  "Ayurveda Practitioner",
-  "Researcher / Academic",
-  "Student",
-  "Startup / Entrepreneur",
-  "Manufacturer",
-  "IP Professional",
-  "Legal Professional",
-  "General User",
+  'Ayurveda Practitioner',
+  'Researcher / Academic',
+  'Student',
+  'Startup / Entrepreneur',
+  'Manufacturer',
+  'IP Professional',
+  'Legal Professional',
+  'General User',
 ];
 
 export const AREAS_OF_INTEREST = [
-  "Patents",
-  "Traditional Knowledge",
-  "Regulatory Classification",
-  "ABS / Biological Resources",
-  "Trademarks & GI",
-  "International IP",
+  'Patents',
+  'Traditional Knowledge',
+  'Regulatory Classification',
+  'ABS / Biological Resources',
+  'Trademarks & GI',
+  'International IP',
 ];
 
 export const INDIAN_STATES = [
-  "Andhra Pradesh",
-  "Assam",
-  "Bihar",
-  "Delhi",
-  "Gujarat",
-  "Haryana",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Tamil Nadu",
-  "Telangana",
-  "Uttar Pradesh",
-  "Uttarakhand",
-  "West Bengal",
-  "Other / Outside India",
+  'Andhra Pradesh',
+  'Assam',
+  'Bihar',
+  'Delhi',
+  'Gujarat',
+  'Haryana',
+  'Karnataka',
+  'Kerala',
+  'Madhya Pradesh',
+  'Maharashtra',
+  'Odisha',
+  'Punjab',
+  'Rajasthan',
+  'Tamil Nadu',
+  'Telangana',
+  'Uttar Pradesh',
+  'Uttarakhand',
+  'West Bengal',
+  'Other / Outside India',
 ];
 
 export const FullScreenSignup = () => {
   // Form mode: register
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    mobile: "",
-    password: "",
-    confirmPassword: "",
-    state: "",
-    userType: "",
-    organization: "",
-    designation: "",
+    fullName: '',
+    email: '',
+    mobile: '',
+    password: '',
+    confirmPassword: '',
+    state: '',
+    userType: '',
+    organization: '',
+    designation: '',
     areasOfInterest: [] as string[],
   });
 
@@ -69,7 +69,7 @@ export const FullScreenSignup = () => {
   };
 
   const validateMobile = (value: string) => {
-    return /^[0-9]{10}$/.test(value.replace(/[^0-9]/g, ""));
+    return /^[0-9]{10}$/.test(value.replace(/[^0-9]/g, ''));
   };
 
   const handleInterestToggle = (area: string) => {
@@ -89,115 +89,109 @@ export const FullScreenSignup = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full Name is required.";
+      newErrors.fullName = 'Full Name is required.';
     }
 
     if (!validateEmail(formData.email)) {
-      newErrors.email = "Please enter a valid email address.";
+      newErrors.email = 'Please enter a valid email address.';
     }
 
     if (!formData.mobile || !validateMobile(formData.mobile)) {
-      newErrors.mobile = "Please enter a valid 10-digit mobile number.";
+      newErrors.mobile = 'Please enter a valid 10-digit mobile number.';
     }
 
     if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters.";
+      newErrors.password = 'Password must be at least 8 characters.';
     }
 
     if (formData.confirmPassword !== formData.password) {
-      newErrors.confirmPassword = "Passwords do not match.";
+      newErrors.confirmPassword = 'Passwords do not match.';
     }
 
     if (!formData.state) {
-      newErrors.state = "Please select your state.";
+      newErrors.state = 'Please select your state.';
     }
 
     if (!formData.userType) {
-      newErrors.userType = "Please select your user/stakeholder type.";
+      newErrors.userType = 'Please select your user/stakeholder type.';
     }
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
       setSubmitted(true);
-      console.log("Registration submitted successfully:", formData);
-      alert("Account created successfully! Welcome to IP-SAKTI Sahayak.");
+      console.log('Registration submitted successfully:', formData);
+      alert('Account created successfully! Welcome to IP-SAKTI Sahayak.');
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center overflow-hidden p-4 sm:p-6 bg-black text-white pt-24 pb-12">
-      <div className="w-full relative max-w-5xl overflow-hidden flex flex-col md:flex-row shadow-2xl rounded-3xl border border-white/10">
-        <div className="w-full h-full z-2 absolute bg-gradient-to-t from-transparent to-black/80 pointer-events-none"></div>
-        
-        {/* Decorative backdrop stripes */}
-        <div className="flex absolute z-2 overflow-hidden backdrop-blur-2xl pointer-events-none">
-          <div className="h-[50rem] z-2 w-[4rem] bg-gradient-to-r from-transparent via-black via-[69%] to-white/20 opacity-30 overflow-hidden"></div>
-          <div className="h-[50rem] z-2 w-[4rem] bg-gradient-to-r from-transparent via-black via-[69%] to-white/20 opacity-30 overflow-hidden"></div>
-          <div className="h-[50rem] z-2 w-[4rem] bg-gradient-to-r from-transparent via-black via-[69%] to-white/20 opacity-30 overflow-hidden"></div>
-          <div className="h-[50rem] z-2 w-[4rem] bg-gradient-to-r from-transparent via-black via-[69%] to-white/20 opacity-30 overflow-hidden"></div>
-          <div className="h-[50rem] z-2 w-[4rem] bg-gradient-to-r from-transparent via-black via-[69%] to-white/20 opacity-30 overflow-hidden"></div>
-          <div className="h-[50rem] z-2 w-[4rem] bg-gradient-to-r from-transparent via-black via-[69%] to-white/20 opacity-30 overflow-hidden"></div>
-        </div>
-
-        {/* Glow orb accents */}
-        <div className="w-[15rem] h-[15rem] bg-orange-500/30 blur-3xl absolute z-1 rounded-full bottom-0 left-0 pointer-events-none"></div>
-        <div className="w-[12rem] h-[12rem] bg-emerald-500/20 blur-3xl absolute z-1 rounded-full top-0 right-0 pointer-events-none"></div>
-
+    <div className="auth-register min-h-dvh flex items-center justify-center overflow-hidden bg-[#f7faf7] p-4 pt-24 pb-12 text-emerald-950 sm:p-6">
+      <div className="w-full max-w-5xl overflow-hidden rounded-[2rem] border border-emerald-900/10 bg-white shadow-xl shadow-emerald-950/10 md:flex">
         {/* Left Side: Branding / Banner */}
-        <div className="bg-gradient-to-b from-slate-950 to-black text-white p-8 md:p-12 md:w-5/12 relative flex flex-col justify-between overflow-hidden border-r border-white/10 z-10">
-          <div>
-            <div className="flex items-center gap-2 text-orange-500 mb-6">
-              <Sunburst className="h-10 w-10 animate-pulse" />
-              <span className="text-xl font-bold tracking-tight text-white">IP-SAKTI</span>
+        <div className="relative flex overflow-hidden bg-primary p-8 text-white md:w-5/12 md:p-12">
+          <div className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full border border-white/20" />
+          <div className="pointer-events-none absolute right-10 top-10 size-28 rounded-full border border-white/15" />
+          <Leaf
+            aria-hidden
+            className="pointer-events-none absolute right-14 top-14 size-14 rotate-12 text-emerald-100/70"
+          />
+          <div className="relative flex flex-1 flex-col justify-between">
+            <div>
+              <div className="mb-16">
+                <span className="text-xl font-semibold tracking-tight">IP-SAKTI</span>
+              </div>
+              <p className="mb-3 text-xs font-semibold text-emerald-100">START YOUR IP WORKSPACE</p>
+              <h1 className="text-2xl font-medium leading-tight tracking-tight md:text-3xl">
+                Build a safer path for your Ayurveda innovation.
+              </h1>
+              <p className="mt-4 max-w-sm text-sm leading-relaxed text-emerald-50/80">
+                Set up one workspace for your formulation records, protection strategy, and market
+                research.
+              </p>
             </div>
-            <h1 className="text-2xl md:text-3xl font-medium leading-tight tracking-tight relative mb-4">
-              Ayurveda Intellectual Property & Regulatory Compliance Platform
-            </h1>
-            <p className="text-slate-400 text-sm leading-relaxed">
-              Empowering researchers, practitioners, startups, and institutions to safeguard traditional knowledge, patents, and global compliance.
-            </p>
-          </div>
-
-          <div className="mt-8 pt-6 border-t border-white/10 text-xs text-slate-400">
-            <p>🌿 Supported by Ministry of Ayush & TKDL Registries</p>
+            <div className="mt-12 flex items-center gap-2 border-t border-white/20 pt-5 text-xs text-emerald-50/80">
+              <ShieldCheck className="size-4" /> Built for researchers, practitioners, and founders
+            </div>
           </div>
         </div>
 
         {/* Right Side: Register Form */}
-        <div className="p-6 md:p-10 md:w-7/12 flex flex-col bg-slate-900/90 backdrop-blur-xl z-20 text-slate-100 max-h-[85vh] overflow-y-auto scrollbar-thin">
+        <div className="flex max-h-[85vh] flex-col overflow-y-auto bg-[#fffdf6] p-6 text-emerald-950 md:w-7/12 md:p-10">
           <div className="flex flex-col items-left mb-6">
-            <h2 className="text-2xl md:text-3xl font-medium mb-1 tracking-tight text-white">
-              Create an Account
+            <p className="mb-2 text-xs font-semibold text-primary">GET STARTED</p>
+            <h2 className="mb-1 text-2xl font-medium tracking-tight md:text-3xl">
+              Create an account
             </h2>
-            <p className="text-left text-sm opacity-80 text-slate-300">
-              Welcome to IP-SAKTI Sahayak — Register to start protecting your innovation
+            <p className="text-left text-sm text-emerald-950/60">
+              Tell us a little about your work so Sahayak can be more useful.
             </p>
           </div>
 
           {submitted && (
-            <div className="mb-6 p-4 rounded-xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 text-sm">
+            <div className="mb-6 rounded-xl border border-primary/25 bg-emerald-50 p-4 text-sm text-primary">
               Account registered successfully! Redirecting to login...
             </div>
           )}
 
           <form className="flex flex-col gap-4" onSubmit={handleSubmit} noValidate>
             {/* Required Section Header */}
-            <div className="text-xs font-semibold text-orange-400 uppercase tracking-wider mb-1">
-              Required Details
-            </div>
+            <div className="mb-1 text-xs font-semibold text-primary">Required Details</div>
 
             {/* Full Name */}
             <div>
-              <label htmlFor="fullName" className="block text-xs font-medium mb-1 text-slate-300">
-                Full Name <span className="text-orange-500">*</span>
+              <label
+                htmlFor="fullName"
+                className="mb-1 block text-xs font-medium text-emerald-950/75"
+              >
+                Full Name <span className="text-primary">*</span>
               </label>
               <input
                 type="text"
                 id="fullName"
                 placeholder="Dr. Rajesh Sharma"
                 className={`text-sm w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 bg-slate-950 text-white focus:ring-orange-500 ${
-                  errors.fullName ? "border-red-500" : "border-slate-700"
+                  errors.fullName ? 'border-red-500' : 'border-slate-700'
                 }`}
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
@@ -216,7 +210,7 @@ export const FullScreenSignup = () => {
                   id="email"
                   placeholder="rajesh@ayurveda.in"
                   className={`text-sm w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 bg-slate-950 text-white focus:ring-orange-500 ${
-                    errors.email ? "border-red-500" : "border-slate-700"
+                    errors.email ? 'border-red-500' : 'border-slate-700'
                   }`}
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -233,7 +227,7 @@ export const FullScreenSignup = () => {
                   id="mobile"
                   placeholder="9876543210"
                   className={`text-sm w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 bg-slate-950 text-white focus:ring-orange-500 ${
-                    errors.mobile ? "border-red-500" : "border-slate-700"
+                    errors.mobile ? 'border-red-500' : 'border-slate-700'
                   }`}
                   value={formData.mobile}
                   onChange={(e) => setFormData({ ...formData, mobile: e.target.value })}
@@ -253,7 +247,7 @@ export const FullScreenSignup = () => {
                   id="password"
                   placeholder="••••••••"
                   className={`text-sm w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 bg-slate-950 text-white focus:ring-orange-500 ${
-                    errors.password ? "border-red-500" : "border-slate-700"
+                    errors.password ? 'border-red-500' : 'border-slate-700'
                   }`}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -262,7 +256,10 @@ export const FullScreenSignup = () => {
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-xs font-medium mb-1 text-slate-300">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-xs font-medium mb-1 text-slate-300"
+                >
                   Confirm Password <span className="text-orange-500">*</span>
                 </label>
                 <input
@@ -270,7 +267,7 @@ export const FullScreenSignup = () => {
                   id="confirmPassword"
                   placeholder="••••••••"
                   className={`text-sm w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 bg-slate-950 text-white focus:ring-orange-500 ${
-                    errors.confirmPassword ? "border-red-500" : "border-slate-700"
+                    errors.confirmPassword ? 'border-red-500' : 'border-slate-700'
                   }`}
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
@@ -291,7 +288,7 @@ export const FullScreenSignup = () => {
                   <select
                     id="state"
                     className={`text-sm w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 bg-slate-950 text-white focus:ring-orange-500 appearance-none pr-8 ${
-                      errors.state ? "border-red-500" : "border-slate-700"
+                      errors.state ? 'border-red-500' : 'border-slate-700'
                     }`}
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
@@ -316,7 +313,7 @@ export const FullScreenSignup = () => {
                   <select
                     id="userType"
                     className={`text-sm w-full py-2 px-3 border rounded-lg focus:outline-none focus:ring-2 bg-slate-950 text-white focus:ring-orange-500 appearance-none pr-8 ${
-                      errors.userType ? "border-red-500" : "border-slate-700"
+                      errors.userType ? 'border-red-500' : 'border-slate-700'
                     }`}
                     value={formData.userType}
                     onChange={(e) => setFormData({ ...formData, userType: e.target.value })}
@@ -342,7 +339,10 @@ export const FullScreenSignup = () => {
             {/* Organization & Designation */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="organization" className="block text-xs font-medium mb-1 text-slate-400">
+                <label
+                  htmlFor="organization"
+                  className="block text-xs font-medium mb-1 text-slate-400"
+                >
                   Organization / Institution
                 </label>
                 <input
@@ -356,7 +356,10 @@ export const FullScreenSignup = () => {
               </div>
 
               <div>
-                <label htmlFor="designation" className="block text-xs font-medium mb-1 text-slate-400">
+                <label
+                  htmlFor="designation"
+                  className="block text-xs font-medium mb-1 text-slate-400"
+                >
                   Designation
                 </label>
                 <input
@@ -385,12 +388,14 @@ export const FullScreenSignup = () => {
                       onClick={() => handleInterestToggle(area)}
                       className={`text-xs p-2 rounded-lg border text-left transition-all flex items-center justify-between ${
                         isSelected
-                          ? "bg-orange-500/20 border-orange-500 text-orange-300 font-medium"
-                          : "bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700"
+                          ? 'bg-orange-500/20 border-orange-500 text-orange-300 font-medium'
+                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
                       }`}
                     >
                       <span className="line-clamp-1">{area}</span>
-                      {isSelected && <Check className="w-3.5 h-3.5 text-orange-400 shrink-0 ml-1" />}
+                      {isSelected && (
+                        <Check className="w-3.5 h-3.5 text-orange-400 shrink-0 ml-1" />
+                      )}
                     </button>
                   );
                 })}
@@ -407,8 +412,11 @@ export const FullScreenSignup = () => {
 
             {/* Login Navigation Link */}
             <div className="text-center text-slate-400 text-xs mt-2">
-              Already have an account?{" "}
-              <Link href="/login" className="text-orange-400 hover:text-orange-300 font-medium underline">
+              Already have an account?{' '}
+              <Link
+                href="/login"
+                className="text-orange-400 hover:text-orange-300 font-medium underline"
+              >
                 Login
               </Link>
             </div>

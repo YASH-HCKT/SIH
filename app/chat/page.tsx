@@ -1,642 +1,363 @@
-'use client'
+'use client';
 
-import * as React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import * as React from 'react';
+import { motion } from 'framer-motion';
 import {
-  SendIcon,
-  Loader2Icon,
-  CheckIcon,
   ArrowUpIcon,
-  PlusIcon,
-  UploadIcon,
-  GlobeIcon,
-  TelescopeIcon,
+  BookOpenIcon,
+  CheckIcon,
+  FileTextIcon,
+  LeafIcon,
+  Loader2Icon,
   MicIcon,
-  SquareIcon,
-  AudioLinesIcon,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+  PlusIcon,
+  ScaleIcon,
+  ShieldCheckIcon,
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-// Types
-type MessageRole = 'user' | 'assistant'
-type SendStatus = 'idle' | 'loading' | 'success'
+type MessageRole = 'user' | 'assistant';
+type SendStatus = 'idle' | 'loading' | 'success';
 
 interface Message {
-  id: string
-  role: MessageRole
-  content: string
-  citations?: string[]
-  confidence?: 'high' | 'medium' | 'low'
-  timestamp: Date
+  id: string;
+  role: MessageRole;
+  content: string;
+  citations?: string[];
+  confidence?: 'high' | 'medium' | 'low';
+  timestamp: Date;
 }
 
-// Constants
-const EASE = [0.2, 0, 0, 1] as const
-const SPRING_SOFT = { type: 'spring' as const, stiffness: 420, damping: 32 }
-const SPRING_PRESS = { type: 'spring' as const, stiffness: 500, damping: 28 }
-
-const MENU_PANEL_CLASS = cn(
-  'bg-slate-950/95 backdrop-blur-xl text-white origin-bottom-left overflow-hidden rounded-2xl border border-slate-800 p-1.5',
-  'shadow-2xl'
-)
-
-const TOOLBAR_BTN_CLASS = cn(
-  'relative flex size-9 cursor-pointer items-center justify-center rounded-xl',
-  'transition-all duration-200 ease-[cubic-bezier(0.2,0,0,1)]',
-  'hover:bg-slate-800 hover:text-white',
-  'focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:outline-none',
-  'disabled:pointer-events-none disabled:opacity-40'
-)
-
-// Demo messages for initial state
 const DEMO_MESSAGES: Message[] = [
   {
     id: '1',
     role: 'assistant',
-    content: "Namaste! I'm IP-SAKTI Sahayak, your Ayurveda IP & Regulatory Assistant. I can help you with:",
-    citations: [],
+    content:
+      'Namaste. I’m Sahayak, your guide for Ayurveda intellectual property and regulatory questions.',
     confidence: 'high',
-    timestamp: new Date(Date.now() - 60000),
+    citations: [],
+    timestamp: new Date(),
   },
   {
     id: '2',
     role: 'assistant',
-    content: '• Patent filing for Ayurvedic formulations\n• Trademark registration guidance\n• Geographical Indications (GI) protection\n• Regulatory compliance (AYUSH, FDA, EU standards)\n• Traditional knowledge documentation\n• International market requirements',
-    citations: [],
+    content:
+      'Start with a question about a formulation, a filing route, traditional knowledge, or a target market. I’ll keep the answer practical and show where it comes from.',
     confidence: 'high',
-    timestamp: new Date(Date.now() - 45000),
+    citations: [],
+    timestamp: new Date(),
+  },
+];
+
+const starterQuestions = [
+  {
+    icon: FileTextIcon,
+    title: 'Patent a formulation',
+    detail: 'Check novelty and filing options',
+    query: 'How do I assess patentability for my Ayurvedic formulation?',
   },
   {
-    id: '3',
-    role: 'assistant',
-    content: 'Ask me anything about protecting your Ayurvedic intellectual property or navigating regulatory requirements across different markets.',
-    citations: [],
-    confidence: 'high',
-    timestamp: new Date(Date.now() - 30000),
+    icon: ShieldCheckIcon,
+    title: 'Protect a brand',
+    detail: 'Trademark basics for Ayurveda products',
+    query: 'What do I need for trademark registration?',
   },
-]
+  {
+    icon: ScaleIcon,
+    title: 'Check compliance',
+    detail: 'AYUSH and export requirements',
+    query: 'What are the export regulations for Ayurvedic products?',
+  },
+  {
+    icon: BookOpenIcon,
+    title: 'Document knowledge',
+    detail: 'Traditional knowledge and TKDL',
+    query: 'How should I document traditional knowledge for my product?',
+  },
+];
 
-// ============================================================================
-// AI Prompt Input Component
-// ============================================================================
-
-interface AiPromptInputProps {
-  value: string
-  onChange: (value: string) => void
-  onSubmit: (value: string) => void
-  disabled?: boolean
-  status?: SendStatus
-  placeholder?: string
-}
-
-const AiPromptInput = React.forwardRef<HTMLTextAreaElement, AiPromptInputProps>(
-  ({ value, onChange, onSubmit, disabled, status = 'idle', placeholder }, ref) => {
-    const [focused, setFocused] = React.useState(false)
-    const [height, setHeight] = React.useState<number | 'auto'>('auto')
-    const textareaRef = React.useRef<HTMLTextAreaElement | null>(null)
-    const mirrorRef = React.useRef<HTMLDivElement | null>(null)
-
-    const isLoading = status === 'loading'
-    const isSuccess = status === 'success'
-    const hasText = value.trim().length > 0
-    const showSend = hasText || isLoading || isSuccess
-
-    // Auto-resize textarea
-    const resize = React.useCallback(() => {
-      const el = textareaRef.current
-      if (!el) return
-
-      const styles = window.getComputedStyle(el)
-      const lineHeight = Number.parseFloat(styles.lineHeight) || 24
-      const paddingY =
-        Number.parseFloat(styles.paddingTop) +
-        Number.parseFloat(styles.paddingBottom)
-      const minH = lineHeight * 1 + paddingY
-      const maxH = lineHeight * 6 + paddingY
-
-      el.style.height = 'auto'
-      const next = Math.min(Math.max(el.scrollHeight, minH), maxH)
-      setHeight(next)
-      el.style.overflowY = el.scrollHeight > maxH ? 'auto' : 'hidden'
-    }, [value])
-
-    React.useLayoutEffect(() => {
-      resize()
-    }, [resize, value])
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Enter' && !e.shiftKey && !disabled && !isLoading) {
-        e.preventDefault()
-        onSubmit(value)
-      }
-    }
-
-    return (
-      <motion.div
-        data-slot="ai-prompt-input"
-        data-focused={focused || undefined}
-        data-disabled={disabled || undefined}
-        data-status={status}
-        animate={{
-          boxShadow: focused
-            ? '0 0 0 2px rgba(16, 185, 129, 0.3), 0 20px 40px -12px rgba(0, 0, 0, 0.3)'
-            : '0 4px 16px rgba(0, 0, 0, 0.1)',
-        }}
-        transition={{ duration: 0.2 }}
-        className={cn(
-          'relative w-full overflow-hidden rounded-2xl bg-slate-900/80 backdrop-blur-sm border border-slate-800',
-          'transition-all duration-200',
-          disabled && 'pointer-events-none opacity-55'
-        )}
-      >
-        <div
-          ref={mirrorRef}
-          aria-hidden
-          className="invisible absolute top-0 left-0 -z-10 px-4 py-3 text-base leading-6 break-words whitespace-pre-wrap font-sans"
-        />
-
-        <div className="relative min-h-12">
-          <textarea
-            ref={(node) => {
-              textareaRef.current = node
-              if (typeof ref === 'function') ref(node)
-              else if (ref) ref.current = node
-            }}
-            value={value}
-            disabled={disabled || isLoading}
-            onChange={(e) => onChange(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            placeholder={placeholder || 'Ask about patents, compliance, GI protection...'}
-            className={cn(
-              'relative z-10 block w-full resize-none bg-transparent px-4 py-3',
-              'text-base text-white placeholder-slate-500',
-              'outline-none focus:outline-none',
-              'disabled:cursor-not-allowed',
-              'font-sans transition-colors'
-            )}
-            style={{ height: typeof height === 'number' ? height : undefined }}
-            rows={1}
-          />
-        </div>
-
-        <AnimatePresence initial={false}>
-          {focused || hasText ? (
-            <motion.div
-              key="toolbar"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.2 }}
-              className="border-t border-slate-800 px-4 py-3 flex items-center justify-between gap-2"
-            >
-              <div className="flex items-center gap-1">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.96 }}
-                  className={TOOLBAR_BTN_CLASS}
-                  disabled={disabled || isLoading}
-                  type="button"
-                >
-                  <PlusIcon className="size-4" />
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.96 }}
-                  className={TOOLBAR_BTN_CLASS}
-                  disabled={disabled || isLoading}
-                  type="button"
-                >
-                  <GlobeIcon className="size-4" />
-                </motion.button>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.96 }}
-                  className={TOOLBAR_BTN_CLASS}
-                  disabled={disabled || isLoading}
-                  type="button"
-                >
-                  <MicIcon className="size-4" />
-                </motion.button>
-
-                <motion.button
-                  whileHover={showSend ? { scale: 1.08 } : undefined}
-                  whileTap={showSend ? { scale: 0.94 } : undefined}
-                  type="button"
-                  onClick={() => {
-                    if (showSend && !isLoading) onSubmit(value)
-                  }}
-                  disabled={!showSend || isLoading}
-                  className={cn(
-                    'relative flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-full',
-                    'transition-all duration-200',
-                    'focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:outline-none',
-                    'disabled:pointer-events-none',
-                    showSend
-                      ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg hover:shadow-emerald-500/20'
-                      : 'bg-slate-800 text-slate-500 cursor-default'
-                  )}
-                >
-                  <AnimatePresence mode="wait" initial={false}>
-                    {isLoading ? (
-                      <motion.span
-                        key="loader"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                      >
-                        <Loader2Icon className="size-5 animate-spin" />
-                      </motion.span>
-                    ) : isSuccess ? (
-                      <motion.span
-                        key="check"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                      >
-                        <CheckIcon className="size-5" />
-                      </motion.span>
-                    ) : (
-                      <motion.span
-                        key="send"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                      >
-                        <ArrowUpIcon className="size-5" />
-                      </motion.span>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
-              </div>
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </motion.div>
-    )
-  }
-)
-
-AiPromptInput.displayName = 'AiPromptInput'
-
-// ============================================================================
-// Citation Card Component
-// ============================================================================
-
-interface CitationCardProps {
-  source: string
-  excerpt?: string
-}
-
-const CitationCard = ({ source, excerpt }: CitationCardProps) => (
-  <motion.div
-    initial={{ opacity: 0, y: 4 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="mt-3 rounded-lg bg-slate-800/50 border border-slate-700 p-3 text-xs text-slate-300"
-  >
-    <div className="font-semibold text-slate-200 mb-1">Source:</div>
-    <div className="text-slate-400">{source}</div>
-    {excerpt && <div className="mt-2 italic text-slate-500">{excerpt}</div>}
-  </motion.div>
-)
-
-// ============================================================================
-// Message Display Component
-// ============================================================================
-
-interface MessageDisplayProps {
-  message: Message
-}
-
-const MessageDisplay = ({ message }: MessageDisplayProps) => {
-  const isAssistant = message.role === 'assistant'
-
+function CitationList({ citations }: { citations: string[] }) {
+  if (!citations.length) return null;
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
+    <div className="mt-4 border-t border-emerald-900/10 pt-3">
+      <p className="mb-2 text-xs font-semibold text-emerald-950/60">Sources used</p>
+      <div className="space-y-1.5">
+        {citations.map((citation) => (
+          <div key={citation} className="flex items-start gap-2 text-xs text-emerald-950/65">
+            <BookOpenIcon className="mt-0.5 size-3.5 shrink-0 text-primary" />
+            <span>{citation}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MessageBubble({ message }: { message: Message }) {
+  const assistant = message.role === 'assistant';
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={cn('flex gap-3', isAssistant ? 'justify-start' : 'justify-end')}
+      className={cn('flex gap-3 sm:gap-4', assistant ? 'items-start' : 'items-end justify-end')}
     >
-      {isAssistant && (
-        <div className="size-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-          IP
+      {assistant && (
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-sm">
+          <LeafIcon className="size-4" />
         </div>
       )}
-
-      <div className={cn('max-w-2xl', isAssistant ? 'flex-1' : 'flex-0')}>
-        <div className="flex items-center gap-2 mb-1">
-          {isAssistant && message.confidence && (
-            <span
-              className={cn(
-                'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold tracking-wide uppercase',
-                message.confidence === 'high' &&
-                  'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40',
-                message.confidence === 'medium' &&
-                  'bg-amber-950/80 text-amber-300 border border-amber-500/40',
-                message.confidence === 'low' &&
-                  'bg-rose-950/80 text-rose-300 border border-rose-500/40'
-              )}
-            >
-              Confidence: {message.confidence}
-            </span>
-          )}
-        </div>
-
-        <motion.div
+      <div className={cn('max-w-2xl', assistant ? 'w-full' : 'max-w-[85%]')}>
+        <div
           className={cn(
-            'rounded-2xl px-4 py-3 text-sm leading-relaxed',
-            isAssistant
-              ? 'bg-slate-800/60 text-slate-50 border border-slate-700/50'
-              : 'bg-emerald-600 text-white'
+            'rounded-2xl px-4 py-3.5 text-sm leading-6 sm:px-5',
+            assistant
+              ? 'border border-emerald-900/10 bg-white text-emerald-950 shadow-sm'
+              : 'bg-primary text-white shadow-sm'
           )}
         >
-          {message.content.split('\n').map((line, idx) => (
-            <div key={idx}>{line || '\n'}</div>
+          {message.content.split('\n').map((line, index) => (
+            <p key={`${message.id}-${index}`} className={index ? 'mt-2' : undefined}>
+              {line || '\u00a0'}
+            </p>
           ))}
-        </motion.div>
-
-        {isAssistant && message.citations && message.citations.length > 0 && (
-          <div className="mt-2 space-y-2">
-            {message.citations.map((citation, idx) => (
-              <CitationCard key={idx} source={citation} />
-            ))}
-          </div>
-        )}
+          {assistant && message.confidence && (
+            <div className="mt-4 flex items-center gap-2 border-t border-emerald-900/10 pt-3 text-xs text-emerald-950/55">
+              <CheckIcon className="size-3.5 text-primary" />
+              {message.confidence === 'high'
+                ? 'High-confidence guidance'
+                : 'Review with a qualified professional'}
+            </div>
+          )}
+          {assistant && <CitationList citations={message.citations ?? []} />}
+        </div>
       </div>
-
-      {!isAssistant && (
-        <div className="size-8 rounded-full bg-slate-700 flex items-center justify-center text-slate-300 text-sm font-bold flex-shrink-0">
-          U
+      {!assistant && (
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-emerald-900/10 bg-white text-xs font-semibold text-primary">
+          You
         </div>
       )}
-    </motion.div>
-  )
+    </motion.article>
+  );
 }
 
-// ============================================================================
-// Main IP-SAKTI Assistant Page
-// ============================================================================
+function Composer({
+  value,
+  onChange,
+  onSubmit,
+  status,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: (value: string) => void;
+  status: SendStatus;
+}) {
+  const busy = status === 'loading';
+  const canSend = value.trim().length > 0 && !busy;
+  return (
+    <div className="rounded-2xl border border-emerald-900/15 bg-white p-2 shadow-lg shadow-emerald-950/5">
+      <textarea
+        value={value}
+        disabled={busy}
+        rows={2}
+        onChange={(event) => onChange(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' && !event.shiftKey && canSend) {
+            event.preventDefault();
+            onSubmit(value);
+          }
+        }}
+        placeholder="Ask about patents, trademarks, GI protection, or compliance..."
+        aria-label="Ask Sahayak a question"
+        className="w-full resize-none bg-transparent px-3 py-2 text-sm leading-6 text-emerald-950 outline-none placeholder:text-emerald-950/35"
+      />
+      <div className="flex items-center justify-between border-t border-emerald-900/10 px-2 pt-2">
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            aria-label="Add attachment"
+            className="flex size-8 items-center justify-center rounded-lg text-emerald-950/45 transition hover:bg-emerald-50 hover:text-primary"
+          >
+            <PlusIcon className="size-4" />
+          </button>
+          <button
+            type="button"
+            aria-label="Use microphone"
+            className="flex size-8 items-center justify-center rounded-lg text-emerald-950/45 transition hover:bg-emerald-50 hover:text-primary"
+          >
+            <MicIcon className="size-4" />
+          </button>
+          <span className="hidden pl-2 text-xs text-emerald-950/40 sm:inline">
+            Enter to send · Shift + Enter for a new line
+          </span>
+        </div>
+        <button
+          type="button"
+          aria-label="Send message"
+          disabled={!canSend}
+          onClick={() => onSubmit(value)}
+          className="flex size-9 items-center justify-center rounded-xl bg-primary text-white transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:bg-emerald-100 disabled:text-emerald-400"
+        >
+          {busy ? (
+            <Loader2Icon className="size-4 animate-spin" />
+          ) : status === 'success' ? (
+            <CheckIcon className="size-4" />
+          ) : (
+            <ArrowUpIcon className="size-4" />
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function ChatPage() {
-  const [messages, setMessages] = React.useState<Message[]>(DEMO_MESSAGES)
-  const [inputValue, setInputValue] = React.useState('')
-  const [status, setStatus] = React.useState<SendStatus>('idle')
-  const [isLoading, setIsLoading] = React.useState(false)
-  const messagesEndRef = React.useRef<HTMLDivElement | null>(null)
-  const timersRef = React.useRef<number[]>([])
+  const [messages, setMessages] = React.useState<Message[]>(DEMO_MESSAGES);
+  const [inputValue, setInputValue] = React.useState('');
+  const [status, setStatus] = React.useState<SendStatus>('idle');
+  const [isLoading, setIsLoading] = React.useState(false);
+  const messagesEndRef = React.useRef<HTMLDivElement | null>(null);
+  const previousMessageCount = React.useRef(DEMO_MESSAGES.length);
 
   React.useEffect(() => {
-    return () => {
-      timersRef.current.forEach(id => window.clearTimeout(id))
+    if (messages.length > previousMessageCount.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [])
-
-  const scrollToBottom = React.useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
-
-  React.useEffect(() => {
-    scrollToBottom()
-  }, [messages, scrollToBottom])
+    previousMessageCount.current = messages.length;
+  }, [messages.length]);
 
   const handleSubmit = React.useCallback(
     async (value: string) => {
-      if (!value.trim() || isLoading) return
-
+      if (!value.trim() || isLoading) return;
       const userMessage: Message = {
-        id: `msg-${Date.now()}`,
+        id: `user-${Date.now()}`,
         role: 'user',
         content: value,
         timestamp: new Date(),
-      }
-
-      const aiMsgId = `msg-${Date.now()}-ai`
-      const assistantMessagePlaceholder: Message = {
-        id: aiMsgId,
-        role: 'assistant',
-        content: '',
-        citations: [],
-        timestamp: new Date(),
-      }
-
-      const currentHistory = [...messages]
-
-      setMessages(prev => [...prev, userMessage, assistantMessagePlaceholder])
-      setInputValue('')
-      setStatus('loading')
-      setIsLoading(true)
-
+      };
+      const assistantId = `assistant-${Date.now()}`;
+      const currentHistory = [...messages];
+      setMessages((previous) => [
+        ...previous,
+        userMessage,
+        { id: assistantId, role: 'assistant', content: '', citations: [], timestamp: new Date() },
+      ]);
+      setInputValue('');
+      setStatus('loading');
+      setIsLoading(true);
       try {
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: value,
-            history: currentHistory.map(m => ({ role: m.role, content: m.content })),
+            history: currentHistory.map(({ role, content }) => ({ role, content })),
           }),
-        })
-
-        if (!response.ok || !response.body) {
-          let errorMsg = 'Failed to fetch AI response.'
-          try {
-            const errData = await response.json()
-            if (errData?.error) errorMsg = errData.error
-          } catch {
-            // response was not JSON
-          }
-          throw new Error(errorMsg)
-        }
-
-        const citationsHeader = response.headers.get('X-Citations')
-        const confidenceHeader = response.headers.get('X-Confidence') as 'high' | 'medium' | 'low' | null
-        const confidence = confidenceHeader || 'medium'
-        let citations: string[] = []
-        if (citationsHeader) {
-          try {
-            citations = JSON.parse(citationsHeader)
-          } catch {
-            citations = []
-          }
-        }
-
-        const reader = response.body.getReader()
-        const decoder = new TextDecoder()
-        let accumulatedContent = ''
-
+        });
+        if (!response.ok || !response.body)
+          throw new Error('Unable to reach Sahayak right now. Please try again.');
+        const citationsHeader = response.headers.get('X-Citations');
+        const confidence =
+          (response.headers.get('X-Confidence') as Message['confidence']) || 'medium';
+        const citations = citationsHeader ? (JSON.parse(citationsHeader) as string[]) : [];
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let content = '';
         while (true) {
-          const { done, value: chunk } = await reader.read()
-          if (done) break
-          accumulatedContent += decoder.decode(chunk, { stream: true })
-
-          setMessages(prev =>
-            prev.map(msg =>
-              msg.id === aiMsgId
-                ? { ...msg, content: accumulatedContent, citations, confidence }
-                : msg
+          const { done, value: chunk } = await reader.read();
+          if (done) break;
+          content += decoder.decode(chunk, { stream: true });
+          setMessages((previous) =>
+            previous.map((message) =>
+              message.id === assistantId ? { ...message, content, citations, confidence } : message
             )
-          )
+          );
         }
-
-        setStatus('success')
-        const idleTimer = window.setTimeout(() => {
-          setStatus('idle')
-          setIsLoading(false)
-        }, 900)
-        timersRef.current.push(idleTimer)
-      } catch (error: any) {
-        console.error('API call error:', error)
-        setMessages(prev =>
-          prev.map(msg =>
-            msg.id === aiMsgId
-              ? {
-                  ...msg,
-                  content:
-                    error?.message ||
-                    'Sorry, I encountered an error connecting to the assistant. Please try again.',
-                  confidence: 'low',
-                }
-              : msg
+        setStatus('success');
+        window.setTimeout(() => setStatus('idle'), 700);
+      } catch (error) {
+        const content =
+          error instanceof Error
+            ? error.message
+            : 'Unable to reach Sahayak right now. Please try again.';
+        setMessages((previous) =>
+          previous.map((message) =>
+            message.id === assistantId ? { ...message, content, confidence: 'low' } : message
           )
-        )
-        setStatus('idle')
-        setIsLoading(false)
+        );
+        setStatus('idle');
+      } finally {
+        setIsLoading(false);
       }
     },
     [isLoading, messages]
-  )
+  );
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="w-full min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white pt-20"
-    >
-      {/* Background effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl" />
-      </div>
-
-      {/* Main container */}
-      <div className="relative z-10 flex flex-col min-h-[calc(100vh-5rem)] max-w-4xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="border-b border-slate-800/50 py-6 sm:py-8"
-        >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="size-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
-              <span className="text-lg font-bold">🌿</span>
+    <main className="min-h-dvh bg-[#f7faf7] px-4 pb-8 pt-24 text-emerald-950 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-3xl">
+        <section className="min-w-0">
+          <header className="mb-8 border-b border-emerald-900/10 pb-6">
+            <div className="mb-3 flex items-center gap-2 text-xs font-semibold text-primary">
+              <span className="size-2 rounded-full bg-primary" />
+              IP-SAKTI assistant
             </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white">IP-SAKTI Sahayak</h1>
-              <p className="text-sm text-slate-400">Ayurveda IP & Regulatory Assistant</p>
-            </div>
+            <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-emerald-950 text-balance sm:text-4xl">
+              A clear next step for your Ayurveda IP question.
+            </h1>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-emerald-950/60 text-pretty">
+              Research-backed guidance for protecting formulations, documenting heritage, and
+              entering new markets.
+            </p>
+          </header>
+          <div className="space-y-5">
+            {messages.map((message) => (
+              <MessageBubble key={message.id} message={message} />
+            ))}
+            {isLoading && (
+              <div className="flex items-center gap-3 text-sm text-emerald-950/55">
+                <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-white">
+                  <LeafIcon className="size-4" />
+                </span>
+                Sahayak is reading your question...
+              </div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
-          <p className="text-slate-400 text-sm leading-relaxed mt-2">
-            Your intelligent guide for intellectual property protection and regulatory compliance in Ayurvedic products
-          </p>
-        </motion.div>
-
-        {/* Messages container */}
-        <div className="flex-1 overflow-y-auto py-8 space-y-6 scroll-smooth min-h-[350px]">
-          <AnimatePresence mode="wait" initial={false}>
-            {messages.map((message, idx) => (
-              <MessageDisplay key={`${message.id}-${idx}`} message={message} />
-            ))}
-          </AnimatePresence>
-
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex gap-3 justify-start"
-            >
-              <div className="size-8 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-                IP
-              </div>
-              <div className="bg-slate-800/60 rounded-2xl px-4 py-3 border border-slate-700/50">
-                <div className="flex gap-2">
-                  {[0, 1, 2].map(i => (
-                    <motion.div
-                      key={i}
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{
-                        duration: 1,
-                        repeat: Infinity,
-                        delay: i * 0.1,
-                      }}
-                      className="size-2 bg-emerald-400 rounded-full"
-                    />
-                  ))}
-                </div>
-              </div>
-            </motion.div>
+          {!messages.some((message) => message.role === 'user') && (
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              {starterQuestions.map(({ icon: Icon, title, detail, query }) => (
+                <button
+                  key={title}
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => handleSubmit(query)}
+                  className="group flex items-start gap-3 rounded-xl border border-emerald-900/10 bg-white p-3.5 text-left transition hover:border-primary/40 disabled:opacity-50"
+                >
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-primary">
+                    <Icon className="size-4" />
+                  </span>
+                  <span>
+                    <span className="block text-sm font-semibold text-emerald-950">{title}</span>
+                    <span className="mt-1 block text-xs text-emerald-950/55">{detail}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
           )}
-
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input area */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="border-t border-slate-800/50 py-6 sm:py-8"
-        >
-          <AiPromptInput
-            value={inputValue}
-            onChange={setInputValue}
-            onSubmit={handleSubmit}
-            disabled={isLoading}
-            status={status}
-            placeholder="Ask about patents, trademarks, GI protection, regulatory compliance..."
-          />
-
-          {/* Quick suggestions */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"
-          >
-            {[
-              { icon: '📋', label: 'Patent Filing Process', query: 'How do I file a patent for my Ayurvedic formulation?' },
-              { icon: '™️', label: 'Trademark Registration', query: "What's required for trademark registration?" },
-              { icon: '🌍', label: 'GI Protection', query: 'How can I protect my product with GI status?' },
-              { icon: '⚖️', label: 'Regulatory Compliance', query: 'What are the export regulations for Ayurvedic products?' },
-            ].map((suggestion, idx) => (
-              <motion.button
-                key={idx}
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                type="button"
-                onClick={() => handleSubmit(suggestion.query)}
-                disabled={isLoading}
-                className={cn(
-                  'text-left p-3 rounded-lg border border-slate-700/50 bg-slate-800/30 hover:bg-slate-800/60',
-                  'transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none'
-                )}
-              >
-                <div className="flex items-start gap-2">
-                  <span className="text-lg mt-0.5">{suggestion.icon}</span>
-                  <span className="text-sm text-slate-300 leading-snug">{suggestion.label}</span>
-                </div>
-              </motion.button>
-            ))}
-          </motion.div>
-
-          <p className="text-xs text-slate-500 text-center mt-4">
-            IP-SAKTI Sahayak • Powered by Ministry of Ayush • Always consult legal experts for official guidance
-          </p>
-        </motion.div>
+          <div className="mt-8">
+            <Composer
+              value={inputValue}
+              onChange={setInputValue}
+              onSubmit={handleSubmit}
+              status={status}
+            />
+            <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[11px] text-emerald-950/45">
+              <ShieldCheckIcon className="size-3.5" />
+              Educational guidance only. Consult a qualified IP or regulatory professional.
+            </p>
+          </div>
+        </section>
       </div>
-    </motion.div>
-  )
+    </main>
+  );
 }

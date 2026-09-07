@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import * as React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import * as React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   SendIcon,
   Loader2Icon,
@@ -14,30 +14,30 @@ import {
   MicIcon,
   SquareIcon,
   AudioLinesIcon,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
+} from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 // Types
-type MessageRole = 'user' | 'assistant'
-type SendStatus = 'idle' | 'loading' | 'success'
+type MessageRole = 'user' | 'assistant';
+type SendStatus = 'idle' | 'loading' | 'success';
 
 interface Message {
-  id: string
-  role: MessageRole
-  content: string
-  citations?: string[]
-  timestamp: Date
+  id: string;
+  role: MessageRole;
+  content: string;
+  citations?: string[];
+  timestamp: Date;
 }
 
 // Constants
-const EASE = [0.2, 0, 0, 1] as const
-const SPRING_SOFT = { type: 'spring' as const, stiffness: 420, damping: 32 }
-const SPRING_PRESS = { type: 'spring' as const, stiffness: 500, damping: 28 }
+const EASE = [0.2, 0, 0, 1] as const;
+const SPRING_SOFT = { type: 'spring' as const, stiffness: 420, damping: 32 };
+const SPRING_PRESS = { type: 'spring' as const, stiffness: 500, damping: 28 };
 
 const MENU_PANEL_CLASS = cn(
   'bg-slate-950/95 backdrop-blur-xl text-white origin-bottom-left overflow-hidden rounded-2xl border border-slate-800 p-1.5',
   'shadow-2xl'
-)
+);
 
 const TOOLBAR_BTN_CLASS = cn(
   'relative flex size-9 cursor-pointer items-center justify-center rounded-xl',
@@ -45,87 +45,89 @@ const TOOLBAR_BTN_CLASS = cn(
   'hover:bg-slate-800 hover:text-white',
   'focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:outline-none',
   'disabled:pointer-events-none disabled:opacity-40'
-)
+);
 
 // Demo messages for initial state
 const DEMO_MESSAGES: Message[] = [
   {
     id: '1',
     role: 'assistant',
-    content: 'Namaste! I\'m IP-SAKTI Sahayak, your Ayurveda IP & Regulatory Assistant. I can help you with:',
+    content:
+      "Namaste! I'm IP-SAKTI Sahayak, your Ayurveda IP & Regulatory Assistant. I can help you with:",
     citations: [],
     timestamp: new Date(Date.now() - 60000),
   },
   {
     id: '2',
     role: 'assistant',
-    content: '• Patent filing for Ayurvedic formulations\n• Trademark registration guidance\n• Geographical Indications (GI) protection\n• Regulatory compliance (AYUSH, FDA, EU standards)\n• Traditional knowledge documentation\n• International market requirements',
+    content:
+      '• Patent filing for Ayurvedic formulations\n• Trademark registration guidance\n• Geographical Indications (GI) protection\n• Regulatory compliance (AYUSH, FDA, EU standards)\n• Traditional knowledge documentation\n• International market requirements',
     citations: [],
     timestamp: new Date(Date.now() - 45000),
   },
   {
     id: '3',
     role: 'assistant',
-    content: 'Ask me anything about protecting your Ayurvedic intellectual property or navigating regulatory requirements across different markets.',
+    content:
+      'Ask me anything about protecting your Ayurvedic intellectual property or navigating regulatory requirements across different markets.',
     citations: [],
     timestamp: new Date(Date.now() - 30000),
   },
-]
+];
 
 // ============================================================================
 // AI Prompt Input Component (Simplified)
 // ============================================================================
 
 interface AiPromptInputProps {
-  value: string
-  onChange: (value: string) => void
-  onSubmit: (value: string) => void
-  disabled?: boolean
-  status?: SendStatus
-  placeholder?: string
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: (value: string) => void;
+  disabled?: boolean;
+  status?: SendStatus;
+  placeholder?: string;
 }
 
 const AiPromptInput = React.forwardRef<HTMLTextAreaElement, AiPromptInputProps>(
   ({ value, onChange, onSubmit, disabled, status = 'idle', placeholder }, ref) => {
-    const [focused, setFocused] = React.useState(false)
-    const [height, setHeight] = React.useState<number | 'auto'>('auto')
-    const textareaRef = React.useRef<HTMLTextAreaElement | null>(null)
-    const mirrorRef = React.useRef<HTMLDivElement | null>(null)
+    const [focused, setFocused] = React.useState(false);
+    const [height, setHeight] = React.useState<number | 'auto'>('auto');
+    const textareaRef = React.useRef<HTMLTextAreaElement | null>(null);
+    const mirrorRef = React.useRef<HTMLDivElement | null>(null);
 
-    const isLoading = status === 'loading'
-    const isSuccess = status === 'success'
-    const hasText = value.trim().length > 0
-    const showSend = hasText || isLoading || isSuccess
+    const isLoading = status === 'loading';
+    const isSuccess = status === 'success';
+    const hasText = value.trim().length > 0;
+    const showSend = hasText || isLoading || isSuccess;
 
     // Auto-resize textarea
     const resize = React.useCallback(() => {
-      const el = textareaRef.current
-      if (!el) return
+      const el = textareaRef.current;
+      if (!el) return;
 
-      const styles = window.getComputedStyle(el)
-      const lineHeight = Number.parseFloat(styles.lineHeight) || 24
+      const styles = window.getComputedStyle(el);
+      const lineHeight = Number.parseFloat(styles.lineHeight) || 24;
       const paddingY =
-        Number.parseFloat(styles.paddingTop) +
-        Number.parseFloat(styles.paddingBottom)
-      const minH = lineHeight * 1 + paddingY
-      const maxH = lineHeight * 6 + paddingY
+        Number.parseFloat(styles.paddingTop) + Number.parseFloat(styles.paddingBottom);
+      const minH = lineHeight * 1 + paddingY;
+      const maxH = lineHeight * 6 + paddingY;
 
-      el.style.height = 'auto'
-      const next = Math.min(Math.max(el.scrollHeight, minH), maxH)
-      setHeight(next)
-      el.style.overflowY = el.scrollHeight > maxH ? 'auto' : 'hidden'
-    }, [value])
+      el.style.height = 'auto';
+      const next = Math.min(Math.max(el.scrollHeight, minH), maxH);
+      setHeight(next);
+      el.style.overflowY = el.scrollHeight > maxH ? 'auto' : 'hidden';
+    }, [value]);
 
     React.useLayoutEffect(() => {
-      resize()
-    }, [resize, value])
+      resize();
+    }, [resize, value]);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       if (e.key === 'Enter' && !e.shiftKey && !disabled && !isLoading) {
-        e.preventDefault()
-        onSubmit(value)
+        e.preventDefault();
+        onSubmit(value);
       }
-    }
+    };
 
     return (
       <motion.div
@@ -154,9 +156,9 @@ const AiPromptInput = React.forwardRef<HTMLTextAreaElement, AiPromptInputProps>(
         <div className="relative min-h-12">
           <textarea
             ref={(node) => {
-              textareaRef.current = node
-              if (typeof ref === 'function') ref(node)
-              else if (ref) ref.current = node
+              textareaRef.current = node;
+              if (typeof ref === 'function') ref(node);
+              else if (ref) ref.current = node;
             }}
             value={value}
             disabled={disabled || isLoading}
@@ -221,7 +223,7 @@ const AiPromptInput = React.forwardRef<HTMLTextAreaElement, AiPromptInputProps>(
                   whileHover={showSend ? { scale: 1.08 } : undefined}
                   whileTap={showSend ? { scale: 0.94 } : undefined}
                   onClick={() => {
-                    if (showSend && !isLoading) onSubmit(value)
+                    if (showSend && !isLoading) onSubmit(value);
                   }}
                   disabled={!showSend || isLoading}
                   className={cn(
@@ -270,19 +272,19 @@ const AiPromptInput = React.forwardRef<HTMLTextAreaElement, AiPromptInputProps>(
           ) : null}
         </AnimatePresence>
       </motion.div>
-    )
+    );
   }
-)
+);
 
-AiPromptInput.displayName = 'AiPromptInput'
+AiPromptInput.displayName = 'AiPromptInput';
 
 // ============================================================================
 // Citation Card Component
 // ============================================================================
 
 interface CitationCardProps {
-  source: string
-  excerpt?: string
+  source: string;
+  excerpt?: string;
 }
 
 const CitationCard = ({ source, excerpt }: CitationCardProps) => (
@@ -295,18 +297,18 @@ const CitationCard = ({ source, excerpt }: CitationCardProps) => (
     <div className="text-slate-400">{source}</div>
     {excerpt && <div className="mt-2 italic text-slate-500">{excerpt}</div>}
   </motion.div>
-)
+);
 
 // ============================================================================
 // Message Display Component
 // ============================================================================
 
 interface MessageDisplayProps {
-  message: Message
+  message: Message;
 }
 
 const MessageDisplay = ({ message }: MessageDisplayProps) => {
-  const isAssistant = message.role === 'assistant'
+  const isAssistant = message.role === 'assistant';
 
   return (
     <motion.div
@@ -350,61 +352,61 @@ const MessageDisplay = ({ message }: MessageDisplayProps) => {
         </div>
       )}
     </motion.div>
-  )
-}
+  );
+};
 
 // ============================================================================
 // Main IP-SAKTI Assistant Page
 // ============================================================================
 
 export default function IpSaktiAssistant() {
-  const [messages, setMessages] = React.useState<Message[]>(DEMO_MESSAGES)
-  const [inputValue, setInputValue] = React.useState('')
-  const [status, setStatus] = React.useState<SendStatus>('idle')
-  const [isLoading, setIsLoading] = React.useState(false)
-  const messagesEndRef = React.useRef<HTMLDivElement | null>(null)
-  const timersRef = React.useRef<number[]>([])
+  const [messages, setMessages] = React.useState<Message[]>(DEMO_MESSAGES);
+  const [inputValue, setInputValue] = React.useState('');
+  const [status, setStatus] = React.useState<SendStatus>('idle');
+  const [isLoading, setIsLoading] = React.useState(false);
+  const messagesEndRef = React.useRef<HTMLDivElement | null>(null);
+  const timersRef = React.useRef<number[]>([]);
 
   React.useEffect(() => {
     return () => {
-      timersRef.current.forEach(id => window.clearTimeout(id))
-    }
-  }, [])
+      timersRef.current.forEach((id) => window.clearTimeout(id));
+    };
+  }, []);
 
   const scrollToBottom = React.useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [])
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
 
   React.useEffect(() => {
-    scrollToBottom()
-  }, [messages, scrollToBottom])
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
 
   const handleSubmit = React.useCallback(
     async (value: string) => {
-      if (!value.trim() || isLoading) return
+      if (!value.trim() || isLoading) return;
 
       const userMessage: Message = {
         id: `msg-${Date.now()}`,
         role: 'user',
         content: value,
         timestamp: new Date(),
-      }
+      };
 
-      const aiMsgId = `msg-${Date.now()}-ai`
+      const aiMsgId = `msg-${Date.now()}-ai`;
       const assistantMessagePlaceholder: Message = {
         id: aiMsgId,
         role: 'assistant',
         content: '',
         citations: [],
         timestamp: new Date(),
-      }
+      };
 
-      const currentHistory = [...messages]
+      const currentHistory = [...messages];
 
-      setMessages(prev => [...prev, userMessage, assistantMessagePlaceholder])
-      setInputValue('')
-      setStatus('loading')
-      setIsLoading(true)
+      setMessages((prev) => [...prev, userMessage, assistantMessagePlaceholder]);
+      setInputValue('');
+      setStatus('loading');
+      setIsLoading(true);
 
       try {
         const response = await fetch('/api/chat', {
@@ -412,52 +414,50 @@ export default function IpSaktiAssistant() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             message: value,
-            history: currentHistory.map(m => ({ role: m.role, content: m.content })),
+            history: currentHistory.map((m) => ({ role: m.role, content: m.content })),
           }),
-        })
+        });
 
         if (!response.ok || !response.body) {
-          throw new Error('Failed to fetch AI response')
+          throw new Error('Failed to fetch AI response');
         }
 
-        const citationsHeader = response.headers.get('X-Citations')
-        let citations: string[] = []
+        const citationsHeader = response.headers.get('X-Citations');
+        let citations: string[] = [];
         if (citationsHeader) {
           try {
-            citations = JSON.parse(citationsHeader)
+            citations = JSON.parse(citationsHeader);
           } catch {
-            citations = []
+            citations = [];
           }
         }
 
-        const reader = response.body.getReader()
-        const decoder = new TextDecoder()
-        let accumulatedContent = ''
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let accumulatedContent = '';
 
         while (true) {
-          const { done, value: chunk } = await reader.read()
-          if (done) break
-          accumulatedContent += decoder.decode(chunk, { stream: true })
+          const { done, value: chunk } = await reader.read();
+          if (done) break;
+          accumulatedContent += decoder.decode(chunk, { stream: true });
 
-          setMessages(prev =>
-            prev.map(msg =>
-              msg.id === aiMsgId
-                ? { ...msg, content: accumulatedContent, citations }
-                : msg
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === aiMsgId ? { ...msg, content: accumulatedContent, citations } : msg
             )
-          )
+          );
         }
 
-        setStatus('success')
+        setStatus('success');
         const idleTimer = window.setTimeout(() => {
-          setStatus('idle')
-          setIsLoading(false)
-        }, 900)
-        timersRef.current.push(idleTimer)
+          setStatus('idle');
+          setIsLoading(false);
+        }, 900);
+        timersRef.current.push(idleTimer);
       } catch (error) {
-        console.error('API call error:', error)
-        setMessages(prev =>
-          prev.map(msg =>
+        console.error('API call error:', error);
+        setMessages((prev) =>
+          prev.map((msg) =>
             msg.id === aiMsgId
               ? {
                   ...msg,
@@ -466,13 +466,13 @@ export default function IpSaktiAssistant() {
                 }
               : msg
           )
-        )
-        setStatus('idle')
-        setIsLoading(false)
+        );
+        setStatus('idle');
+        setIsLoading(false);
       }
     },
     [isLoading, messages]
-  )
+  );
 
   return (
     <motion.div
@@ -504,7 +504,8 @@ export default function IpSaktiAssistant() {
             </div>
           </div>
           <p className="text-slate-400 text-sm leading-relaxed mt-2">
-            Your intelligent guide for intellectual property protection and regulatory compliance in Ayurvedic products
+            Your intelligent guide for intellectual property protection and regulatory compliance in
+            Ayurvedic products
           </p>
         </motion.div>
 
@@ -527,7 +528,7 @@ export default function IpSaktiAssistant() {
               </div>
               <div className="bg-slate-800/60 rounded-2xl px-4 py-3 border border-slate-700/50">
                 <div className="flex gap-2">
-                  {[0, 1, 2].map(i => (
+                  {[0, 1, 2].map((i) => (
                     <motion.div
                       key={i}
                       animate={{ scale: [1, 1.2, 1] }}
@@ -570,10 +571,26 @@ export default function IpSaktiAssistant() {
             className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3"
           >
             {[
-              { icon: '📋', label: 'Patent Filing Process', query: 'How do I file a patent for my Ayurvedic formulation?' },
-              { icon: '™️', label: 'Trademark Registration', query: 'What\'s required for trademark registration?' },
-              { icon: '🌍', label: 'GI Protection', query: 'How can I protect my product with GI status?' },
-              { icon: '⚖️', label: 'Regulatory Compliance', query: 'What are the export regulations for Ayurvedic products?' },
+              {
+                icon: '📋',
+                label: 'Patent Filing Process',
+                query: 'How do I file a patent for my Ayurvedic formulation?',
+              },
+              {
+                icon: '™️',
+                label: 'Trademark Registration',
+                query: "What's required for trademark registration?",
+              },
+              {
+                icon: '🌍',
+                label: 'GI Protection',
+                query: 'How can I protect my product with GI status?',
+              },
+              {
+                icon: '⚖️',
+                label: 'Regulatory Compliance',
+                query: 'What are the export regulations for Ayurvedic products?',
+              },
             ].map((suggestion, idx) => (
               <motion.button
                 key={idx}
@@ -595,10 +612,11 @@ export default function IpSaktiAssistant() {
           </motion.div>
 
           <p className="text-xs text-slate-500 text-center mt-4">
-            IP-SAKTI Sahayak • Powered by Ministry of Ayush • Always consult legal experts for official guidance
+            IP-SAKTI Sahayak • Powered by Ministry of Ayush • Always consult legal experts for
+            official guidance
           </p>
         </motion.div>
       </div>
     </motion.div>
-  )
+  );
 }

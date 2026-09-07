@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { motion, useInView } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import { useRef } from "react";
+import { motion, useInView } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
+import { useRef } from 'react';
 
 /* ---------------- WordsPullUp ---------------- */
 interface WordsPullUpProps {
@@ -12,10 +12,15 @@ interface WordsPullUpProps {
   style?: React.CSSProperties;
 }
 
-export const WordsPullUp = ({ text, className = "", showAsterisk = false, style }: WordsPullUpProps) => {
+export const WordsPullUp = ({
+  text,
+  className = '',
+  showAsterisk = false,
+  style,
+}: WordsPullUpProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
-  const words = text.split(" ");
+  const words = text.split(' ');
 
   return (
     <div ref={ref} className={`inline-flex flex-wrap ${className}`} style={style}>
@@ -28,7 +33,7 @@ export const WordsPullUp = ({ text, className = "", showAsterisk = false, style 
             animate={isInView ? { y: 0, opacity: 1 } : {}}
             transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
             className="inline-block relative"
-            style={{ marginRight: isLast ? 0 : "0.25em" }}
+            style={{ marginRight: isLast ? 0 : '0.25em' }}
           >
             {word}
             {showAsterisk && isLast && (
@@ -53,13 +58,17 @@ interface WordsPullUpMultiStyleProps {
   style?: React.CSSProperties;
 }
 
-export const WordsPullUpMultiStyle = ({ segments, className = "", style }: WordsPullUpMultiStyleProps) => {
+export const WordsPullUpMultiStyle = ({
+  segments,
+  className = '',
+  style,
+}: WordsPullUpMultiStyleProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
 
   const words: { word: string; className?: string }[] = [];
   segments.forEach((seg) => {
-    seg.text.split(" ").forEach((w) => {
+    seg.text.split(' ').forEach((w) => {
       if (w) words.push({ word: w, className: seg.className });
     });
   });
@@ -72,8 +81,8 @@ export const WordsPullUpMultiStyle = ({ segments, className = "", style }: Words
           initial={{ y: 20, opacity: 0 }}
           animate={isInView ? { y: 0, opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-          className={`inline-block ${w.className ?? ""}`}
-          style={{ marginRight: "0.25em" }}
+          className={`inline-block ${w.className ?? ''}`}
+          style={{ marginRight: '0.25em' }}
         >
           {w.word}
         </motion.span>
@@ -84,18 +93,17 @@ export const WordsPullUpMultiStyle = ({ segments, className = "", style }: Words
 
 /* ---------------- Hero Component for IP-SAKTI Sahayak ---------------- */
 const navItems = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Features", href: "/features" },
-  { label: "How It Works", href: "/how-it-works" },
-  { label: "Team", href: "/team" },
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
+  { label: 'Features', href: '/features' },
+  { label: 'How It Works', href: '/how-it-works' },
+  { label: 'Team', href: '/team' },
 ];
 
 const IPSaktiHero = () => {
   return (
     <section className="h-screen w-full">
-      <div className="relative h-full w-full overflow-hidden rounded-2xl md:rounded-[2rem]">
-
+      <div className="relative h-full w-full overflow-hidden rounded-b-2xl md:rounded-b-[2rem]">
         {/* Background video - You can replace this CDN URL with your own */}
         <video
           autoPlay
@@ -115,40 +123,39 @@ const IPSaktiHero = () => {
         {/* Hero content */}
         <div className="absolute bottom-0 left-0 right-0 px-4 pb-2 sm:px-6 md:px-10">
           <div className="grid grid-cols-12 items-end gap-4">
-
             <div className="col-span-12 lg:col-span-8">
               <h1
                 className="font-poppins font-bold leading-[0.85] tracking-[-0.05em] text-[26vw] sm:text-[24vw] md:text-[22vw] lg:text-[20vw] xl:text-[19vw] 2xl:text-[20vw]"
-                style={{ color: "#E1E0CC" }}
+                style={{ color: '#E1E0CC' }}
               >
                 <WordsPullUp text="IP- Sakti" />
               </h1>
             </div>
 
             <div className="col-span-12 flex flex-col gap-5 pb-6 lg:col-span-4 lg:pb-10">
-
               <motion.p
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="text-xs text-primary/70 sm:text-sm md:text-base"
+                className="text-xs text-primary-foreground/70 sm:text-sm md:text-base"
                 style={{ lineHeight: 1.2 }}
               >
-                Multilingual RAG-based AI assistant for Intellectual Property and regulatory guidance in Ayurveda. Bridging traditional knowledge with modern IP protection across national and international regimes.
+                Multilingual RAG-based AI assistant for Intellectual Property and regulatory
+                guidance in Ayurveda. Bridging traditional knowledge with modern IP protection
+                across national and international regimes.
               </motion.p>
 
               <motion.button
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="group inline-flex items-center gap-2 self-start rounded-full bg-primary py-1 pl-5 pr-1 text-sm font-medium text-black transition-all hover:gap-3 sm:text-base"
+                className="group inline-flex items-center gap-2 self-start rounded-full bg-primary py-1 pl-5 pr-1 text-sm font-medium text-primary-foreground transition-all hover:gap-3 sm:text-base"
               >
                 Explore the Platform
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-10 sm:w-10">
-                  <ArrowRight className="h-4 w-4" style={{ color: "#E1E0CC" }} />
+                  <ArrowRight className="h-4 w-4" style={{ color: '#000000' }} />
                 </span>
               </motion.button>
-
             </div>
           </div>
         </div>

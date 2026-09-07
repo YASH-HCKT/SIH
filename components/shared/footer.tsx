@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Globe, Mail, MapPin, Link as LinkIcon } from "lucide-react";
+import Link from 'next/link';
+import { Globe, Mail, MapPin, Link as LinkIcon } from 'lucide-react';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -9,17 +9,12 @@ export const Footer = () => {
   return (
     <footer className="bg-black border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          
           {/* About */}
           <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">IP</span>
-              </div>
-              <span className="text-white font-bold">IP-SAKTI</span>
+            <div className="mb-4">
+              <span className="text-emerald-950 font-semibold tracking-tight">IP-SAKTI</span>
             </div>
             <p className="text-gray-400 text-sm">
               Bridging traditional Ayurvedic knowledge with modern intellectual property protection.
@@ -96,7 +91,6 @@ export const Footer = () => {
               </div>
             </div>
           </div>
-
         </div>
 
         {/* Divider */}
@@ -104,7 +98,6 @@ export const Footer = () => {
 
         {/* Bottom Footer */}
         <div className="flex flex-col md:flex-row justify-between items-center">
-          
           <div className="text-gray-400 text-sm mb-4 md:mb-0">
             © {currentYear} IP-SAKTI Sahayak. All rights reserved. | Smart India Hackathon 2026
           </div>

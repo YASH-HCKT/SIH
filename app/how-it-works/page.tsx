@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -12,51 +12,42 @@ const fadeInUp = {
 
 const steps = [
   {
-    number: "01",
-    title: "Submit Your Query",
-    description: "Describe your Ayurvedic formulation, product, or IP concern in your preferred language.",
+    number: '01',
+    title: 'Submit Your Query',
+    description:
+      'Describe your Ayurvedic formulation, product, or IP concern in your preferred language.',
     details: [
-      "Upload formulation details",
-      "Specify target markets",
-      "Mention regulatory concerns",
+      'Upload formulation details',
+      'Specify target markets',
+      'Mention regulatory concerns',
     ],
   },
   {
-    number: "02",
-    title: "AI Analysis",
-    description: "Our RAG system retrieves relevant IP laws, regulatory frameworks, and case precedents.",
-    details: [
-      "Multi-database search",
-      "Regulatory mapping",
-      "Precedent analysis",
-    ],
+    number: '02',
+    title: 'AI Analysis',
+    description:
+      'Our RAG system retrieves relevant IP laws, regulatory frameworks, and case precedents.',
+    details: ['Multi-database search', 'Regulatory mapping', 'Precedent analysis'],
   },
   {
-    number: "03",
-    title: "Context Integration",
-    description: "Information is augmented with Ayurvedic domain knowledge and your specific context.",
-    details: [
-      "Domain expertise applied",
-      "Market analysis",
-      "Competitive positioning",
-    ],
+    number: '03',
+    title: 'Context Integration',
+    description:
+      'Information is augmented with Ayurvedic domain knowledge and your specific context.',
+    details: ['Domain expertise applied', 'Market analysis', 'Competitive positioning'],
   },
   {
-    number: "04",
-    title: "Source-Cited Guidance",
-    description: "Receive actionable recommendations backed by verified sources and legal references.",
-    details: [
-      "Detailed reports",
-      "Source attribution",
-      "Implementation roadmap",
-    ],
+    number: '04',
+    title: 'Source-Cited Guidance',
+    description:
+      'Receive actionable recommendations backed by verified sources and legal references.',
+    details: ['Detailed reports', 'Source attribution', 'Implementation roadmap'],
   },
 ];
 
 export default function HowItWorks() {
   return (
     <div className="min-h-screen bg-black pt-20">
-      
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <motion.div {...fadeInUp} className="text-center max-w-3xl mx-auto">
@@ -73,21 +64,18 @@ export default function HowItWorks() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="space-y-12">
           {steps.map((step, i) => (
-            <motion.div
-              key={i}
-              {...fadeInUp}
-              transition={{ delay: i * 0.1 }}
-            >
+            <motion.div key={i} {...fadeInUp} transition={{ delay: i * 0.1 }}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                
                 {/* Content */}
-                <div className={i % 2 === 1 ? "md:order-2" : ""}>
+                <div className={i % 2 === 1 ? 'md:order-2' : ''}>
                   <div className="flex items-start gap-4 mb-4">
                     <div className="text-5xl font-bold text-primary">{step.number}</div>
                     <div className="flex-1">
                       <h2 className="text-3xl font-bold text-white mb-2">{step.title}</h2>
-                      <p className="text-gray-400 text-lg leading-relaxed mb-6">{step.description}</p>
-                      
+                      <p className="text-gray-400 text-lg leading-relaxed mb-6">
+                        {step.description}
+                      </p>
+
                       <div className="space-y-2">
                         {step.details.map((detail, j) => (
                           <div key={j} className="flex items-center gap-2">
@@ -101,10 +89,11 @@ export default function HowItWorks() {
                 </div>
 
                 {/* Visual */}
-                <div className={`aspect-square bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 rounded-xl flex items-center justify-center ${i % 2 === 1 ? "md:order-1" : ""}`}>
+                <div
+                  className={`aspect-square bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 rounded-xl flex items-center justify-center ${i % 2 === 1 ? 'md:order-1' : ''}`}
+                >
                   <div className="text-6xl font-bold text-primary/20">{step.number}</div>
                 </div>
-
               </div>
 
               {/* Arrow */}
@@ -135,24 +124,24 @@ export default function HowItWorks() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[
             {
-              title: "LLM",
-              tech: "Claude API",
-              description: "Advanced language understanding and generation",
+              title: 'LLM',
+              tech: 'Claude API',
+              description: 'Advanced language understanding and generation',
             },
             {
-              title: "Retrieval",
-              tech: "Vector DB",
-              description: "Fast, accurate document and case law retrieval",
+              title: 'Retrieval',
+              tech: 'Vector DB',
+              description: 'Fast, accurate document and case law retrieval',
             },
             {
-              title: "Data",
-              tech: "Multi-Source",
-              description: "Integration of 50+ authoritative IP databases",
+              title: 'Data',
+              tech: 'Multi-Source',
+              description: 'Integration of 50+ authoritative IP databases',
             },
             {
-              title: "Deployment",
-              tech: "Cloud Native",
-              description: "Scalable, secure, and globally accessible",
+              title: 'Deployment',
+              tech: 'Cloud Native',
+              description: 'Scalable, secure, and globally accessible',
             },
           ].map((tech, i) => (
             <motion.div
@@ -179,19 +168,19 @@ export default function HowItWorks() {
           {[
             {
               q: "How accurate is IP-SAKTI's guidance?",
-              a: "Our recommendations are backed by real-time data from 50+ authoritative IP databases. However, we recommend consulting with IP specialists for final legal decisions.",
+              a: 'Our recommendations are backed by real-time data from 50+ authoritative IP databases. However, we recommend consulting with IP specialists for final legal decisions.',
             },
             {
-              q: "Which languages are supported?",
-              a: "Currently supporting English, Hindi, Sanskrit, Tamil, Telugu, Marathi, and Bengali with plans to add more regional languages.",
+              q: 'Which languages are supported?',
+              a: 'Currently supporting English, Hindi, Sanskrit, Tamil, Telugu, Marathi, and Bengali with plans to add more regional languages.',
             },
             {
-              q: "Is my formulation data secure?",
-              a: "Yes. All submissions are encrypted, stored securely, and can be deleted on request. We never share data with third parties.",
+              q: 'Is my formulation data secure?',
+              a: 'Yes. All submissions are encrypted, stored securely, and can be deleted on request. We never share data with third parties.',
             },
             {
-              q: "Can I export the guidance?",
-              a: "Absolutely. All reports can be exported as PDF for documentation, filing, or sharing with your IP counsel.",
+              q: 'Can I export the guidance?',
+              a: 'Absolutely. All reports can be exported as PDF for documentation, filing, or sharing with your IP counsel.',
             },
           ].map((faq, i) => (
             <motion.div
