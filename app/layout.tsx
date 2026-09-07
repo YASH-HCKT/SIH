@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Inter, Instrument_Serif, Poppins } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/shared/footer";
 import { FloatingNavbar } from "@/components/shared/floating-navbar";
@@ -9,6 +9,11 @@ const instrumentSerif = Instrument_Serif({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-instrument-serif",
+});
+const poppins = Poppins({
+  weight: ["400", "500", "600", "700", "800", "900"],
+  subsets: ["latin"],
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
@@ -37,7 +42,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} ${instrumentSerif.variable} bg-black text-white antialiased`}>
+      <body className={`${inter.className} ${instrumentSerif.variable} ${poppins.variable} bg-black text-white antialiased`}>
         <FloatingNavbar />
         <main>
           {children}

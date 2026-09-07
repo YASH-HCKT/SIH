@@ -5,6 +5,7 @@
   --color-primary: #E1E0CC;
   --color-secondary: #FF6B35;
   --font-serif: var(--font-instrument-serif), serif;
+  --font-poppins: var(--font-poppins), sans-serif;
 }
 
 @theme inline {
