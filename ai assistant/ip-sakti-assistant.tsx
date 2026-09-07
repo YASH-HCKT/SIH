@@ -52,7 +52,7 @@ const DEMO_MESSAGES: Message[] = [
   {
     id: '1',
     role: 'assistant',
-    content: "Namaste! I'm IP-SAKTI Sahayak, your Ayurveda IP & Regulatory Assistant. I can help you with:",
+    content: 'Namaste! I\'m IP-SAKTI Sahayak, your Ayurveda IP & Regulatory Assistant. I can help you with:',
     citations: [],
     timestamp: new Date(Date.now() - 60000),
   },
@@ -73,7 +73,7 @@ const DEMO_MESSAGES: Message[] = [
 ]
 
 // ============================================================================
-// AI Prompt Input Component
+// AI Prompt Input Component (Simplified)
 // ============================================================================
 
 interface AiPromptInputProps {
@@ -193,7 +193,6 @@ const AiPromptInput = React.forwardRef<HTMLTextAreaElement, AiPromptInputProps>(
                   whileTap={{ scale: 0.96 }}
                   className={TOOLBAR_BTN_CLASS}
                   disabled={disabled || isLoading}
-                  type="button"
                 >
                   <PlusIcon className="size-4" />
                 </motion.button>
@@ -203,7 +202,6 @@ const AiPromptInput = React.forwardRef<HTMLTextAreaElement, AiPromptInputProps>(
                   whileTap={{ scale: 0.96 }}
                   className={TOOLBAR_BTN_CLASS}
                   disabled={disabled || isLoading}
-                  type="button"
                 >
                   <GlobeIcon className="size-4" />
                 </motion.button>
@@ -215,7 +213,6 @@ const AiPromptInput = React.forwardRef<HTMLTextAreaElement, AiPromptInputProps>(
                   whileTap={{ scale: 0.96 }}
                   className={TOOLBAR_BTN_CLASS}
                   disabled={disabled || isLoading}
-                  type="button"
                 >
                   <MicIcon className="size-4" />
                 </motion.button>
@@ -223,7 +220,6 @@ const AiPromptInput = React.forwardRef<HTMLTextAreaElement, AiPromptInputProps>(
                 <motion.button
                   whileHover={showSend ? { scale: 1.08 } : undefined}
                   whileTap={showSend ? { scale: 0.94 } : undefined}
-                  type="button"
                   onClick={() => {
                     if (showSend && !isLoading) onSubmit(value)
                   }}
@@ -361,7 +357,7 @@ const MessageDisplay = ({ message }: MessageDisplayProps) => {
 // Main IP-SAKTI Assistant Page
 // ============================================================================
 
-export default function ChatPage() {
+export default function IpSaktiAssistant() {
   const [messages, setMessages] = React.useState<Message[]>(DEMO_MESSAGES)
   const [inputValue, setInputValue] = React.useState('')
   const [status, setStatus] = React.useState<SendStatus>('idle')
@@ -403,7 +399,7 @@ export default function ChatPage() {
       // Simulate AI response delay
       const responseTimer = window.setTimeout(() => {
         const responses: Record<string, string> = {
-          patent: "To file a patent for your Ayurvedic formulation, you'll need to document the composition, preparation method, and benefits. The application should follow WIPO guidelines and include prior art search documentation.",
+          patent: 'To file a patent for your Ayurvedic formulation, you\'ll need to document the composition, preparation method, and benefits. The application should follow WIPO guidelines and include prior art search documentation.',
           trademark: 'Trademark registration for Ayurveda brands requires: (1) Unique brand name, (2) Logo/design, (3) Goods/services classification, (4) Use evidence. Processing time: 18-24 months in India.',
           gi: 'Geographical Indications protect traditional products from specific regions. For Ayurvedic products, GI registration requires proof of traditional knowledge and unique characteristics tied to the region.',
           regulatory: 'AYUSH regulations in India classify Ayurvedic products into different schedules. Export requires compliance with destination country regulations (FDA for US, MHRA for UK, EU directives for Europe).',
@@ -452,7 +448,7 @@ export default function ChatPage() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="w-full min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white pt-20"
+      className="w-full min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white"
     >
       {/* Background effects */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -461,12 +457,12 @@ export default function ChatPage() {
       </div>
 
       {/* Main container */}
-      <div className="relative z-10 flex flex-col min-h-[calc(100vh-5rem)] max-w-4xl mx-auto px-4 sm:px-6">
+      <div className="relative z-10 flex flex-col h-screen max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="border-b border-slate-800/50 py-6 sm:py-8"
+          className="border-b border-slate-800/50 px-6 py-6 sm:py-8"
         >
           <div className="flex items-center gap-3 mb-2">
             <div className="size-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
@@ -483,7 +479,7 @@ export default function ChatPage() {
         </motion.div>
 
         {/* Messages container */}
-        <div className="flex-1 overflow-y-auto py-8 space-y-6 scroll-smooth min-h-[350px]">
+        <div className="flex-1 overflow-y-auto px-6 py-8 space-y-6 scroll-smooth">
           <AnimatePresence mode="wait" initial={false}>
             {messages.map((message, idx) => (
               <MessageDisplay key={`${message.id}-${idx}`} message={message} />
@@ -525,7 +521,7 @@ export default function ChatPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="border-t border-slate-800/50 py-6 sm:py-8"
+          className="border-t border-slate-800/50 px-6 py-6 sm:py-8"
         >
           <AiPromptInput
             value={inputValue}
@@ -545,7 +541,7 @@ export default function ChatPage() {
           >
             {[
               { icon: '📋', label: 'Patent Filing Process', query: 'How do I file a patent for my Ayurvedic formulation?' },
-              { icon: '™️', label: 'Trademark Registration', query: "What's required for trademark registration?" },
+              { icon: '™️', label: 'Trademark Registration', query: 'What\'s required for trademark registration?' },
               { icon: '🌍', label: 'GI Protection', query: 'How can I protect my product with GI status?' },
               { icon: '⚖️', label: 'Regulatory Compliance', query: 'What are the export regulations for Ayurvedic products?' },
             ].map((suggestion, idx) => (
@@ -553,7 +549,6 @@ export default function ChatPage() {
                 key={idx}
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                type="button"
                 onClick={() => handleSubmit(suggestion.query)}
                 disabled={isLoading}
                 className={cn(
