@@ -7,41 +7,135 @@ export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-black border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Main Footer Content */}
+    <footer className="footer-logo-section">
+      {/* Top Banner & Socials (New Footer Style) */}
+      <div className="footer-content">
+        <div
+          className="sih-logo"
+          style={{ fontSize: '4rem', marginBottom: '1.5rem', textTransform: 'uppercase' }}
+        >
+          IP - SAKTI
+        </div>
+        <p>.</p>
+        <div className="footer-links">
+          <a
+            href="https://www.facebook.com/AEC1998"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Facebook"
+          >
+            <i className="fab fa-facebook-f"></i>
+          </a>
+          <a
+            href="https://github.com/YASH-HCKT/SIH"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+          >
+            <i className="fab fa-github"></i>
+          </a>
+          <a
+            href="https://www.instagram.com/yashprabhakar____/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+          >
+            <i className="fab fa-instagram"></i>
+          </a>
+          <a
+            href="https://www.linkedin.com/company/smart-india-hackathon/home/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+          >
+            <i className="fab fa-linkedin-in"></i>
+          </a>
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2.5rem',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: '2rem',
+          marginBottom: '4rem',
+        }}
+      >
+        <div className="sih-logo-wrap">
+          <div className="built-for">built for</div>
+          <a
+            href="https://sih.gov.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sih-logo"
+          >
+            SMART INDIA HACKATHON
+          </a>
+        </div>
+
+        <div className="sih-logo-wrap">
+          <div className="built-for">built by</div>
+          <Link
+            href="/about"
+            className="sih-logo"
+            style={{ fontSize: '2.5rem' }}
+          >
+            SENTINALS
+          </Link>
+        </div>
+      </div>
+
+      {/* Prominent Black Separation Line */}
+      <div
+        className="max-w-7xl mx-auto my-8"
+        style={{ borderTop: '1px solid rgba(0, 0, 0, 0.25)' }}
+      />
+
+      {/* Detailed Navigation & Info Footer */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-left">
+        {/* Main Columns */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* About */}
           <div>
             <div className="mb-4">
-              <span className="text-emerald-950 font-semibold tracking-tight">IP-SAKTI</span>
+              <span
+                style={{ color: '#000000' }}
+                className="font-bold tracking-tight text-lg"
+              >
+                IP-SAKTI
+              </span>
             </div>
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-700 text-sm leading-relaxed">
               Bridging traditional Ayurvedic knowledge with modern intellectual property protection.
             </p>
           </div>
 
           {/* Product Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Product</h3>
-            <ul className="space-y-2 text-sm text-gray-400">
+            <h3 style={{ color: '#000000' }} className="font-semibold mb-4 text-base">
+              Product
+            </h3>
+            <ul className="space-y-2 text-sm text-gray-700">
               <li>
-                <Link href="/chat" className="hover:text-primary transition-colors">
+                <Link href="/chat" className="hover:text-emerald-700 transition-colors">
                   AI Assistant
                 </Link>
               </li>
               <li>
-                <Link href="/features" className="hover:text-primary transition-colors">
+                <Link href="/features" className="hover:text-emerald-700 transition-colors">
                   Features
                 </Link>
               </li>
               <li>
-                <Link href="/how-it-works" className="hover:text-primary transition-colors">
+                <Link href="/how-it-works" className="hover:text-emerald-700 transition-colors">
                   How It Works
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-primary transition-colors">
+                <Link href="/about" className="hover:text-emerald-700 transition-colors">
                   About
                 </Link>
               </li>
@@ -50,25 +144,27 @@ export const Footer = () => {
 
           {/* Resources */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Resources</h3>
-            <ul className="space-y-2 text-sm text-gray-400">
+            <h3 style={{ color: '#000000' }} className="font-semibold mb-4 text-base">
+              Resources
+            </h3>
+            <ul className="space-y-2 text-sm text-gray-700">
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <a href="#" className="hover:text-emerald-700 transition-colors">
                   Documentation
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <a href="#" className="hover:text-emerald-700 transition-colors">
                   Blog
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <a href="#" className="hover:text-emerald-700 transition-colors">
                   API Reference
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition-colors">
+                <a href="#" className="hover:text-emerald-700 transition-colors">
                   FAQ
                 </a>
               </li>
@@ -77,15 +173,17 @@ export const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-white font-semibold mb-4">Contact</h3>
-            <div className="space-y-3 text-sm text-gray-400">
+            <h3 style={{ color: '#000000' }} className="font-semibold mb-4 text-base">
+              Contact
+            </h3>
+            <div className="space-y-3 text-sm text-gray-700">
               <div className="flex items-center space-x-2">
                 <MapPin size={16} />
                 <span>Asansol, West Bengal, India</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail size={16} />
-                <a href="mailto:team@ip-sakti.com" className="hover:text-primary transition-colors">
+                <a href="mailto:team@ip-sakti.com" className="hover:text-emerald-700 transition-colors">
                   team@ip-sakti.com
                 </a>
               </div>
@@ -93,48 +191,54 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-white/10 my-8" />
+        {/* Black Separation Line above Copyright */}
+        <div
+          className="my-8"
+          style={{ borderTop: '1px solid rgba(0, 0, 0, 0.25)' }}
+        />
 
-        {/* Bottom Footer */}
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="text-gray-400 text-sm mb-4 md:mb-0">
+        {/* Bottom Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-center text-sm text-gray-700">
+          <div className="mb-4 md:mb-0">
             © {currentYear} IP-SAKTI Sahayak. All rights reserved. | Smart India Hackathon 2026
           </div>
 
-          {/* Social Links */}
-          <div className="flex items-center space-x-6">
+          {/* Social Icons */}
+          <div className="flex items-center space-x-6 my-2 md:my-0 text-gray-800">
             <a
-              href="https://github.com"
+              href="https://github.com/YASH-HCKT/SIH"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-primary transition-colors"
+              aria-label="Website"
+              className="hover:text-emerald-700 transition-colors"
             >
-              <Globe size={20} />
+              <Globe size={18} />
             </a>
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/company/smart-india-hackathon/home/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-primary transition-colors"
+              aria-label="LinkedIn"
+              className="hover:text-emerald-700 transition-colors"
             >
-              <LinkIcon size={20} />
+              <LinkIcon size={18} />
             </a>
             <a
               href="mailto:team@ip-sakti.com"
-              className="text-gray-400 hover:text-primary transition-colors"
+              aria-label="Email"
+              className="hover:text-emerald-700 transition-colors"
             >
-              <Mail size={20} />
+              <Mail size={18} />
             </a>
           </div>
 
           {/* Legal Links */}
-          <div className="flex items-center space-x-4 text-sm text-gray-400 mt-4 md:mt-0">
-            <a href="#" className="hover:text-primary transition-colors">
+          <div className="flex items-center space-x-4 text-gray-700">
+            <a href="#" className="hover:text-emerald-700 transition-colors">
               Privacy
             </a>
-            <span className="text-gray-600">•</span>
-            <a href="#" className="hover:text-primary transition-colors">
+            <span>•</span>
+            <a href="#" className="hover:text-emerald-700 transition-colors">
               Terms
             </a>
           </div>
