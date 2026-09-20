@@ -181,10 +181,10 @@ export default function HowItWorks() {
           <div className="grid gap-4 md:grid-cols-2">{faqs.map((faq, i) => <motion.div key={faq.q} {...fadeInUp} transition={{ delay: i * 0.06 }} className="rounded-2xl border border-[#173b2b]/10 bg-white p-6"><h3 className="text-base font-semibold leading-6">{faq.q}</h3><p className="mt-3 text-sm leading-6 text-[#173b2b]/60">{faq.a}</p></motion.div>)}</div>
           <motion.div {...fadeInUp} className="mt-12 flex flex-col items-center justify-between gap-5 rounded-3xl bg-[#173b2b] p-8 text-center text-white sm:flex-row sm:p-10 sm:text-left">
             <div>
-              <p className="text-2xl font-semibold !text-white" style={{ color: '#ffffff' }}>
+              <p className="text-2xl font-semibold text-white-force">
                 Ready to explore your next step?
               </p>
-              <p className="mt-2 text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+              <p className="mt-2 text-sm text-white-muted-force">
                 Bring your question. We’ll help you find the signal.
               </p>
             </div>

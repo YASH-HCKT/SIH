@@ -163,8 +163,15 @@ body {
 .site-light .bg-primary.text-white,
 .site-light .bg-emerald-600.text-white,
 .site-light .bg-gradient-to-br.text-white,
-.site-light .bg-gradient-to-r.text-white {
+.site-light .bg-gradient-to-r.text-white,
+.site-light .bg-\[\#173b2b\],
+.site-light .bg-\[\#173b2b\] p,
+.site-light .text-white-force {
   color: #ffffff !important;
+}
+
+.site-light .text-white-muted-force {
+  color: rgba(255, 255, 255, 0.85) !important;
 }
 
 .site-light .text-gray-300,
