@@ -24,7 +24,7 @@ export const defaultIPFeatures: FeatureItem[] = [
   {
     id: 1,
     title: '1. AI Assistant',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmVkNtcbwHZ3NFj7GglwniEH61ADvNVmAAiWEMMLrd9w&s=10',
     description:
       'The central conversational interface of IP-SAKTI. Users can ask questions about Ayurvedic innovations, intellectual property, patents, regulations, traditional knowledge, and related topics in natural language.',
   },
@@ -38,7 +38,7 @@ export const defaultIPFeatures: FeatureItem[] = [
   {
     id: 3,
     title: '3. Documentation Assist',
-    image: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGF8ZbWiUnJIspTg8Ha-cg5orNaYgWGSPtupcotkWqZw&s=10',
     description:
       'Helps users understand documentation requirements, organize relevant information, and identify missing documents for IP and regulatory filing processes.',
   },
