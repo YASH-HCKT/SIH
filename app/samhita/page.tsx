@@ -1,68 +1,102 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
   Search,
   Leaf,
+  TreePine,
   Scroll,
   BookOpen,
-  FileCheck,
-  FlaskConical,
-  MapPin,
   ShieldAlert,
+  Landmark,
+  FlaskConical,
+  FileCheck,
   ArrowRight,
   Sparkles,
   ExternalLink,
   Layers,
+  Filter,
   CheckCircle2,
   AlertCircle,
+  HelpCircle,
+  Info,
 } from 'lucide-react';
 import { SAMHITA_CATEGORIES, SAMHITA_ENTRIES, SamhitaEntry } from '@/lib/samhita-data';
 
-const iconMap: Record<string, React.ReactNode> = {
+const categoryIconMap: Record<string, React.ReactNode> = {
   Leaf: <Leaf className="w-5 h-5 text-[#477A5B]" />,
+  TreePine: <TreePine className="w-5 h-5 text-[#477A5B]" />,
   Scroll: <Scroll className="w-5 h-5 text-[#477A5B]" />,
   BookOpen: <BookOpen className="w-5 h-5 text-[#477A5B]" />,
-  FileCheck: <FileCheck className="w-5 h-5 text-[#477A5B]" />,
-  FlaskConical: <FlaskConical className="w-5 h-5 text-[#477A5B]" />,
-  MapPin: <MapPin className="w-5 h-5 text-[#477A5B]" />,
   ShieldAlert: <ShieldAlert className="w-5 h-5 text-[#477A5B]" />,
+  Landmark: <Landmark className="w-5 h-5 text-[#477A5B]" />,
+  FlaskConical: <FlaskConical className="w-5 h-5 text-[#477A5B]" />,
+  FileCheck: <FileCheck className="w-5 h-5 text-[#477A5B]" />,
 };
+
+// 6 Featured Herbs
+const FEATURED_SLUGS = ['ashwagandha', 'tulsi', 'neem', 'turmeric', 'amla', 'brahmi'];
 
 export default function SamhitaPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedPart, setSelectedPart] = useState<string | null>(null);
 
-  // Filter entries based on search or selected category
-  const filteredEntries = SAMHITA_ENTRIES.filter((entry) => {
-    const matchesSearch =
-      searchQuery.trim() === '' ||
-      entry.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      entry.botanicalName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (entry.sanskritName && entry.sanskritName.includes(searchQuery)) ||
-      entry.description.toLowerCase().includes(searchQuery.toLowerCase());
+  // Extract all unique plant parts across entries
+  const allParts = useMemo(() => {
+    const partsSet = new Set<string>();
+    SAMHITA_ENTRIES.forEach((e) => e.partsUsed.forEach((p) => partsSet.add(p)));
+    return Array.from(partsSet).sort();
+  }, []);
 
-    const matchesCategory = !activeCategory || entry.category === activeCategory;
+  // Multi-field search and filtering logic
+  const filteredEntries = useMemo(() => {
+    return SAMHITA_ENTRIES.filter((entry) => {
+      const query = searchQuery.trim().toLowerCase();
 
-    return matchesSearch && matchesCategory;
-  });
+      // Multi-field text match
+      const matchesSearch =
+        query === '' ||
+        entry.commonName.toLowerCase().includes(query) ||
+        entry.scientificName.toLowerCase().includes(query) ||
+        entry.synonyms.some((syn) => syn.toLowerCase().includes(query)) ||
+        Object.values(entry.regionalNames).some((reg) => reg.toLowerCase().includes(query)) ||
+        entry.category.toLowerCase().includes(query) ||
+        entry.traditionalContext.toLowerCase().includes(query) ||
+        entry.ipInformation.patentStatus.toLowerCase().includes(query) ||
+        entry.ipInformation.patentabilityNotes.toLowerCase().includes(query) ||
+        entry.ipInformation.priorArtHighlights.some((pa) => pa.toLowerCase().includes(query));
+
+      // Category filter match
+      const matchesCategory = !selectedCategory || entry.category === selectedCategory;
+
+      // Plant part filter match
+      const matchesPart = !selectedPart || entry.partsUsed.includes(selectedPart);
+
+      return matchesSearch && matchesCategory && matchesPart;
+    });
+  }, [searchQuery, selectedCategory, selectedPart]);
+
+  const featuredEntries = useMemo(() => {
+    return SAMHITA_ENTRIES.filter((e) => FEATURED_SLUGS.includes(e.slug));
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#FFFFFF] text-[#202124] pt-24 pb-16 font-sans">
       {/* HERO SECTION */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#F3F7F3] to-[#FFFFFF] py-16 md:py-24 border-b border-[#DADCE0]">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#F3F7F3] via-[#F8F9FA] to-[#FFFFFF] py-16 md:py-24 border-b border-[#DADCE0]">
         <div className="samhita-container relative z-10 text-center max-w-4xl mx-auto">
-          {/* Tag / Badge */}
+          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E2ECE4] text-[#2D5A3F] text-xs font-semibold tracking-wider uppercase mb-6"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E8F0E9] text-[#2D5A3F] text-xs font-semibold tracking-wider uppercase mb-6 border border-[#477A5B]/20"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#477A5B]" />
-            Traditional Knowledge meets Modern IP
+            Ayurveda Knowledge meets Intellectual Property
           </motion.div>
 
           <motion.h1
@@ -87,12 +121,12 @@ export default function SamhitaPage() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-sm md:text-base text-[#5F6368] max-w-2xl mx-auto mb-10 leading-relaxed"
+            className="text-sm md:text-base text-[#5F6368] max-w-3xl mx-auto mb-10 leading-relaxed"
           >
-            Explore structured knowledge across medicinal plants, classical formulations, traditional remedies, global patent prior art, and scientific research.
+            Explore medicinal plants, traditional knowledge, classical references, scientific research and intellectual-property connections through one intelligent knowledge layer.
           </motion.p>
 
-          {/* SEARCH BAR */}
+          {/* MAJOR SEARCH BAR */}
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -103,7 +137,7 @@ export default function SamhitaPage() {
               <Search className="w-5 h-5 text-[#5F6368] ml-3 mr-2 shrink-0" />
               <input
                 type="text"
-                placeholder="Search herbs, botanical names, formulations, or prior art..."
+                placeholder="Search herbs, plants, formulations, texts, patents..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-transparent border-none text-[#202124] placeholder-[#80868B] text-base focus:outline-none focus:ring-0 py-2.5 px-2"
@@ -111,68 +145,63 @@ export default function SamhitaPage() {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="text-xs text-[#5F6368] hover:text-[#202124] px-3 py-1 rounded-md bg-[#F1F3F4] mr-2"
+                  className="text-xs text-[#5F6368] hover:text-[#202124] px-3 py-1 rounded-md bg-[#F1F3F4] mr-2 shrink-0"
                 >
                   Clear
                 </button>
               )}
             </div>
-            <p className="text-xs text-[#5F6368] text-left mt-2.5 ml-3 flex items-center gap-1.5">
-              <span>Try searching:</span>
-              <button
-                onClick={() => setSearchQuery('Ashwagandha')}
-                className="text-[#477A5B] hover:underline font-medium"
-              >
-                Ashwagandha
-              </button>
-              <span>•</span>
-              <button
-                onClick={() => setSearchQuery('Curcuma longa')}
-                className="text-[#477A5B] hover:underline font-medium"
-              >
-                Curcuma longa
-              </button>
-              <span>•</span>
-              <button
-                onClick={() => setSearchQuery('US Patent 5,401,504')}
-                className="text-[#477A5B] hover:underline font-medium"
-              >
-                US Patent 5,401,504
-              </button>
-            </p>
+
+            {/* Quick search suggestions */}
+            <div className="text-xs text-[#5F6368] text-left mt-3 ml-3 flex flex-wrap items-center gap-2">
+              <span className="font-medium text-[#3C4043]">Suggested searches:</span>
+              {['Ashwagandha', 'Withania', 'Phyllanthus emblica', 'patent', 'TKDL', 'Root'].map((term) => (
+                <button
+                  key={term}
+                  onClick={() => setSearchQuery(term)}
+                  className="px-2.5 py-1 rounded-full bg-[#F8F9FA] hover:bg-[#E8F0E9] text-[#2D5A3F] border border-[#DADCE0] text-[11px] font-medium transition-colors"
+                >
+                  {term}
+                </button>
+              ))}
+            </div>
           </motion.div>
         </div>
       </section>
 
-      {/* CATEGORIES SECTION */}
+      {/* EXPLORE CATEGORIES */}
       <section className="py-12 border-b border-[#DADCE0] bg-[#FFFFFF]">
         <div className="samhita-container">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8">
             <div>
               <h2 className="text-2xl font-bold text-[#202124] tracking-tight mb-1">
-                Explore Knowledge Domains
+                Explore Samhita Knowledge Domains
               </h2>
               <p className="text-sm text-[#5F6368]">
-                Select a category to filter the repository records
+                Browse structured collections across Ayurvedic & IP domains
               </p>
             </div>
-            {activeCategory && (
+            {(selectedCategory || selectedPart || searchQuery) && (
               <button
-                onClick={() => setActiveCategory(null)}
+                onClick={() => {
+                  setSelectedCategory(null);
+                  setSelectedPart(null);
+                  setSearchQuery('');
+                }}
                 className="mt-3 md:mt-0 text-xs font-semibold text-[#477A5B] hover:underline inline-flex items-center gap-1"
               >
-                Reset Filter (Show All)
+                Reset All Filters (Show All 40 Entries)
               </button>
             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {SAMHITA_CATEGORIES.map((cat) => {
-              const isSelected = activeCategory === cat.id;
+              const isSelected = selectedCategory === cat.id;
               return (
                 <button
                   key={cat.id}
-                  onClick={() => setActiveCategory(isSelected ? null : cat.id)}
+                  onClick={() => setSelectedCategory(isSelected ? null : cat.id)}
                   className={`text-left p-5 rounded-2xl border transition-all duration-200 samhita-card-hover ${
                     isSelected
                       ? 'bg-[#F3F7F3] border-[#477A5B] ring-2 ring-[#477A5B]/20'
@@ -181,9 +210,9 @@ export default function SamhitaPage() {
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="p-2.5 rounded-xl bg-[#FFFFFF] border border-[#DADCE0] shadow-sm">
-                      {iconMap[cat.iconName] || <Leaf className="w-5 h-5 text-[#477A5B]" />}
+                      {categoryIconMap[cat.iconName] || <Leaf className="w-5 h-5 text-[#477A5B]" />}
                     </div>
-                    <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#E8F0E9] text-[#2D5A3F]">
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#E8F0E9] text-[#2D5A3F]">
                       {cat.count} records
                     </span>
                   </div>
@@ -200,168 +229,195 @@ export default function SamhitaPage() {
         </div>
       </section>
 
-      {/* FEATURED KNOWLEDGE REPOSITORY GRID */}
-      <section className="py-16 bg-[#FFFFFF]">
+      {/* FEATURED KNOWLEDGE REPOSITORY */}
+      <section className="py-16 bg-[#FFFFFF] border-b border-[#DADCE0]">
         <div className="samhita-container">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-bold text-[#477A5B] uppercase tracking-wider mb-1">
                 <Layers className="w-4 h-4" />
-                Featured Knowledge Profiles
+                Featured Ayurveda Entries
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-[#202124] tracking-tight">
-                Curated Ayurvedic Botanicals & IP Records
+                Benchmark Herbal Profiles & Prior-Art Records
               </h2>
             </div>
-            <p className="text-xs text-[#5F6368] mt-2 md:mt-0">
-              Showing {filteredEntries.length} of {SAMHITA_ENTRIES.length} entries
-            </p>
+            <span className="text-xs text-[#5F6368] mt-2 md:mt-0">
+              Showing 6 benchmark entries
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredEntries.map((entry) => (
+              <div
+                key={entry.slug}
+                className="group bg-[#FFFFFF] rounded-2xl border border-[#DADCE0] overflow-hidden samhita-card-shadow samhita-card-hover flex flex-col h-full"
+              >
+                {/* Image */}
+                <div className="relative h-48 w-full overflow-hidden bg-[#F8F9FA] border-b border-[#DADCE0]">
+                  <img
+                    src={entry.image}
+                    alt={`Botanical photograph of ${entry.scientificName} (${entry.commonName})`}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute top-3 right-3 bg-[#FFFFFF]/90 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold text-[#2D5A3F] border border-[#DADCE0] shadow-sm">
+                    {entry.regionalNames.sanskrit || entry.category}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 flex flex-col flex-grow justify-between">
+                  <div>
+                    <div className="text-xs font-medium text-[#477A5B] italic mb-1">
+                      {entry.scientificName}
+                    </div>
+                    <h3 className="text-xl font-bold text-[#202124] mb-2 group-hover:text-[#477A5B] transition-colors">
+                      {entry.commonName}
+                    </h3>
+                    <p className="text-xs text-[#5F6368] leading-relaxed mb-4 line-clamp-3">
+                      {entry.overview}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="bg-[#F8F9FA] p-3 rounded-xl border border-[#DADCE0] mb-4 space-y-1.5 text-xs text-[#3C4043]">
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-[#202124]">Family:</span>
+                        <span>{entry.family}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-[#202124]">Parts Used:</span>
+                        <span className="truncate max-w-[160px] text-right">{entry.partsUsed.join(', ')}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-[#DADCE0]">
+                      <Link
+                        href={`/samhita/${entry.slug}`}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#477A5B] hover:text-[#2D5A3F] transition-colors"
+                      >
+                        Explore Entry →
+                      </Link>
+                      <span className="text-[11px] text-[#5F6368]">
+                        POWO / e-Charak Verified
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FULL REPOSITORY & FILTERABLE DATASET (40 HERBS) */}
+      <section className="py-16 bg-[#F8F9FA]">
+        <div className="samhita-container">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold text-[#202124]">
+                Complete Repository Index ({filteredEntries.length} Records)
+              </h2>
+              <p className="text-xs text-[#5F6368] mt-1">
+                Filter by category or plant part to refine traditional and IP records
+              </p>
+            </div>
+
+            {/* Plant Part Filter Pills */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold text-[#3C4043] flex items-center gap-1 mr-1">
+                <Filter className="w-3.5 h-3.5" /> Part:
+              </span>
+              <button
+                onClick={() => setSelectedPart(null)}
+                className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                  !selectedPart
+                    ? 'bg-[#477A5B] text-white border-[#477A5B]'
+                    : 'bg-[#FFFFFF] text-[#3C4043] border-[#DADCE0] hover:border-[#477A5B]'
+                }`}
+              >
+                All Parts
+              </button>
+              {allParts.slice(0, 5).map((part) => (
+                <button
+                  key={part}
+                  onClick={() => setSelectedPart(selectedPart === part ? null : part)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                    selectedPart === part
+                      ? 'bg-[#477A5B] text-white border-[#477A5B]'
+                      : 'bg-[#FFFFFF] text-[#3C4043] border-[#DADCE0] hover:border-[#477A5B]'
+                  }`}
+                >
+                  {part}
+                </button>
+              ))}
+            </div>
           </div>
 
           {filteredEntries.length === 0 ? (
-            <div className="text-center py-16 bg-[#F8F9FA] rounded-2xl border border-[#DADCE0]">
+            <div className="text-center py-16 bg-[#FFFFFF] rounded-2xl border border-[#DADCE0]">
               <AlertCircle className="w-10 h-10 text-[#5F6368] mx-auto mb-3" />
-              <h3 className="text-lg font-semibold text-[#202124]">No records match your search</h3>
+              <h3 className="text-lg font-semibold text-[#202124]">No entries match your search</h3>
               <p className="text-sm text-[#5F6368] mt-1 max-w-md mx-auto">
-                Try searching for a different keyword or resetting your category filter.
+                Try searching for another botanical or common name, or clear your category filters.
               </p>
               <button
                 onClick={() => {
                   setSearchQuery('');
-                  setActiveCategory(null);
+                  setSelectedCategory(null);
+                  setSelectedPart(null);
                 }}
-                className="mt-4 px-4 py-2 text-xs font-semibold text-white bg-[#477A5B] rounded-lg hover:bg-[#396248] transition-colors"
+                className="mt-4 px-4 py-2 text-xs font-semibold text-white bg-[#477A5B] rounded-xl hover:bg-[#396248] transition-colors"
               >
-                Reset Search
+                Reset Search Filters
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
               {filteredEntries.map((entry) => (
-                <div
+                <Link
                   key={entry.slug}
-                  className="group bg-[#FFFFFF] rounded-2xl border border-[#DADCE0] overflow-hidden samhita-card-shadow samhita-card-hover flex flex-col h-full"
+                  href={`/samhita/${entry.slug}`}
+                  className="group bg-[#FFFFFF] rounded-2xl border border-[#DADCE0] overflow-hidden samhita-card-shadow samhita-card-hover flex flex-col justify-between p-5"
                 >
-                  {/* Image container with internet plant/herb picture */}
-                  <div className="relative h-48 w-full overflow-hidden bg-[#F8F9FA] border-b border-[#DADCE0]">
-                    <img
-                      src={entry.image}
-                      alt={entry.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-3 right-3 bg-[#FFFFFF]/90 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold text-[#2D5A3F] border border-[#DADCE0] shadow-sm">
-                      {entry.sanskritName}
+                  <div>
+                    {/* Thumbnail Image */}
+                    <div className="relative h-36 w-full rounded-xl overflow-hidden bg-[#F8F9FA] mb-4 border border-[#DADCE0]">
+                      <img
+                        src={entry.image}
+                        alt={`Botanical illustration of ${entry.scientificName}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                      <div className="absolute top-2 left-2 bg-[#FFFFFF]/90 px-2 py-0.5 rounded-full text-[10px] font-bold text-[#2D5A3F] border border-[#DADCE0]">
+                        {entry.category}
+                      </div>
                     </div>
+
+                    <div className="text-[11px] font-medium text-[#477A5B] italic truncate mb-0.5">
+                      {entry.scientificName}
+                    </div>
+                    <h3 className="text-base font-bold text-[#202124] group-hover:text-[#477A5B] transition-colors truncate mb-1.5">
+                      {entry.commonName}
+                    </h3>
+                    <p className="text-xs text-[#5F6368] line-clamp-2 mb-3 leading-relaxed">
+                      {entry.traditionalContext}
+                    </p>
                   </div>
 
-                  {/* Card Content */}
-                  <div className="p-6 flex flex-col flex-grow justify-between">
-                    <div>
-                      <div className="text-xs font-medium text-[#477A5B] italic mb-1">
-                        {entry.botanicalName}
-                      </div>
-                      <h3 className="text-xl font-bold text-[#202124] mb-2 group-hover:text-[#477A5B] transition-colors">
-                        {entry.name}
-                      </h3>
-                      <p className="text-xs text-[#5F6368] leading-relaxed mb-4 line-clamp-3">
-                        {entry.description}
-                      </p>
-                    </div>
-
-                    <div>
-                      {/* Active Compounds & TK Highlights */}
-                      <div className="bg-[#F8F9FA] p-3 rounded-xl border border-[#DADCE0] mb-4 space-y-2">
-                        <div className="flex items-center gap-1.5 text-xs text-[#3C4043]">
-                          <span className="font-semibold text-[#202124]">Compounds:</span>
-                          <span className="truncate">{entry.research.activeCompounds.slice(0, 2).join(', ')}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-xs text-[#3C4043]">
-                          <span className="font-semibold text-[#202124]">TKDL Status:</span>
-                          <span className="truncate text-[#2D5A3F] font-medium">Cataloged Prior Art</span>
-                        </div>
-                      </div>
-
-                      {/* Action Links */}
-                      <div className="flex items-center justify-between pt-2 border-t border-[#DADCE0]">
-                        <Link
-                          href={`/samhita/${entry.slug}`}
-                          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#477A5B] hover:text-[#2D5A3F] transition-colors"
-                        >
-                          Explore Full Entry
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
-                        <a
-                          href={entry.externalReadMoreUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[11px] text-[#5F6368] hover:text-[#202124] transition-colors"
-                        >
-                          NCBI Source
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </div>
-                    </div>
+                  <div className="pt-3 border-t border-[#DADCE0] flex items-center justify-between text-[11px]">
+                    <span className="text-[#3C4043] font-medium">
+                      {entry.partsUsed.slice(0, 2).join(', ')}
+                    </span>
+                    <span className="font-bold text-[#477A5B] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                      Explore <ArrowRight className="w-3 h-3" />
+                    </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
-        </div>
-      </section>
-
-      {/* VISUAL KNOWLEDGE WORKFLOW */}
-      <section className="py-16 bg-[#F8F9FA] border-y border-[#DADCE0]">
-        <div className="samhita-container">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold text-[#202124] mb-3">
-              How Samhita Connects Ayurveda & IP
-            </h2>
-            <p className="text-sm text-[#5F6368]">
-              A transparent flow bridging classical heritage texts with modern patent prior art evaluation.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
-            <div className="bg-[#FFFFFF] p-6 rounded-2xl border border-[#DADCE0] shadow-sm relative">
-              <div className="w-10 h-10 rounded-xl bg-[#E8F0E9] text-[#2D5A3F] font-bold flex items-center justify-center mb-4 text-sm">
-                01
-              </div>
-              <h3 className="font-bold text-[#202124] text-base mb-2">Classical Digitization</h3>
-              <p className="text-xs text-[#5F6368] leading-relaxed">
-                Ayurvedic texts (Charaka, Sushruta, Nighantus) are cataloged into structured plant & formulation records.
-              </p>
-            </div>
-
-            <div className="bg-[#FFFFFF] p-6 rounded-2xl border border-[#DADCE0] shadow-sm relative">
-              <div className="w-10 h-10 rounded-xl bg-[#E8F0E9] text-[#2D5A3F] font-bold flex items-center justify-center mb-4 text-sm">
-                02
-              </div>
-              <h3 className="font-bold text-[#202124] text-base mb-2">Phytochemistry Linkage</h3>
-              <p className="text-xs text-[#5F6368] leading-relaxed">
-                Active bioactives (e.g. Curcumin, Withanolides) are mapped to therapeutic mechanisms & peer-reviewed research.
-              </p>
-            </div>
-
-            <div className="bg-[#FFFFFF] p-6 rounded-2xl border border-[#DADCE0] shadow-sm relative">
-              <div className="w-10 h-10 rounded-xl bg-[#E8F0E9] text-[#2D5A3F] font-bold flex items-center justify-center mb-4 text-sm">
-                03
-              </div>
-              <h3 className="font-bold text-[#202124] text-base mb-2">Prior Art & TKDL Indexing</h3>
-              <p className="text-xs text-[#5F6368] leading-relaxed">
-                Cross-referenced against international patent databases (WIPO/USPTO/EPO) and TKDL protective disclosures.
-              </p>
-            </div>
-
-            <div className="bg-[#FFFFFF] p-6 rounded-2xl border border-[#DADCE0] shadow-sm relative">
-              <div className="w-10 h-10 rounded-xl bg-[#E8F0E9] text-[#2D5A3F] font-bold flex items-center justify-center mb-4 text-sm">
-                04
-              </div>
-              <h3 className="font-bold text-[#202124] text-base mb-2">AI-Driven IP Intelligence</h3>
-              <p className="text-xs text-[#5F6368] leading-relaxed">
-                IP-Sakti AI provides instant prior art risk assessment & Section 3(p) patentability guidance.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -378,7 +434,7 @@ export default function SamhitaPage() {
                 Have questions about Ayurvedic IP or Section 3(p) prior art?
               </h2>
               <p className="text-sm text-[#5F6368] leading-relaxed">
-                Ask our AI assistant for deep contextual analysis on plant formulations, legal precedents, and biodiversity compliance.
+                Query our AI assistant regarding plant formulations, traditional knowledge references, and international patentability considerations.
               </p>
             </div>
 
@@ -393,11 +449,11 @@ export default function SamhitaPage() {
         </div>
       </section>
 
-      {/* DISCLAIMER FOOTNOTE */}
+      {/* FOOTER DISCLAIMER */}
       <footer className="py-8 bg-[#FFFFFF] border-t border-[#DADCE0]">
         <div className="samhita-container text-center text-xs text-[#5F6368]">
           <p className="max-w-3xl mx-auto">
-            <strong>Prototype Disclaimer:</strong> Samhita Knowledge Repository is an educational demonstration platform. Patent status summaries and classical references are cataloged for prior art demonstration purposes and do not constitute formal legal or medical advice.
+            <strong>Educational & IP Knowledge Disclaimer:</strong> Information in Samhita is compiled from public botanical and classical reference sources (e-Charak/NMPB, POWO Kew, TKDL). Content is provided for educational and prior-art reference purposes and does not constitute medical diagnosis or formal legal advice.
           </p>
         </div>
       </footer>
