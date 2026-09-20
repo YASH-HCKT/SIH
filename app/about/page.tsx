@@ -93,16 +93,26 @@ export default function About() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[
+            { name: 'Prasoon Kumar', role: 'Project Lead & Presentation' },
+            { name: 'Yash Prabhakar', role: 'Frontend Development & Product Design' },
+            { name: 'Shashank Gupta', role: 'UI/UX Design & Frontend Development' },
+            { name: 'Prantor Das', role: 'Backend Development' },
+            { name: 'Prajakta Sarkhel', role: 'Full-Stack Development' },
+            { name: 'Princi Kumari', role: 'UI/UX Design & Media' },
+          ].map((member, i) => (
             <motion.div
               key={i}
               {...fadeInUp}
-              className="bg-white/5 border border-white/10 rounded-lg p-6 hover:border-primary/50 transition-colors"
+              transition={{ delay: i * 0.1 }}
+              className="bg-white/5 border border-white/10 rounded-xl p-6 hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10"
             >
-              <div className="w-16 h-16 bg-gradient-to-br from-primary to-orange-600 rounded-full mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2">Team Member {i}</h3>
-              <p className="text-sm text-gray-400">Role & Expertise</p>
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-emerald-600 rounded-full mb-4 flex items-center justify-center text-white text-xl font-bold shadow-inner">
+                {member.name.split(' ').map((n) => n[0]).join('')}
+              </div>
+              <h3 className="text-xl font-bold text-white mb-1">{member.name}</h3>
+              <p className="text-sm text-primary font-medium">{member.role}</p>
             </motion.div>
           ))}
         </div>

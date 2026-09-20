@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { Feature197, defaultIPFeatures } from '@/components/ui/accordion-feature-section';
 import Link from 'next/link';
-import { ArrowRight, Zap, Database, Brain } from 'lucide-react';
+import { ArrowRight, Search, Cpu, Sparkles, Leaf, FlaskConical, BookOpen, Scale } from 'lucide-react';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 20 },
@@ -50,7 +50,7 @@ export default function FeaturesPage() {
             {[
               {
                 title: '1. Retrieval',
-                icon: '🔍',
+                icon: Search,
                 description:
                   'Queries over 50+ authoritative databases including Indian IP Office, TKDL, WIPO, USPTO, and classical text indexes.',
                 items: ['Patent & GI Registries', 'TKDL Prior-Art Records', 'AYUSH Regulations', 'Classical Samhita Corpus'],
@@ -58,7 +58,7 @@ export default function FeaturesPage() {
               },
               {
                 title: '2. Augmentation',
-                icon: '⚙️',
+                icon: Cpu,
                 description:
                   'Domain-tuned context mapping cross-references Ayurvedic plant species, formulation methods, and patent eligibility criteria.',
                 items: ['Section 3(p) Filter', 'Biological ABS Mapping', 'Multilingual Translation', 'Source Citation Verification'],
@@ -66,46 +66,51 @@ export default function FeaturesPage() {
               },
               {
                 title: '3. Generation',
-                icon: '✨',
+                icon: Sparkles,
                 description:
                   'Delivers precise, actionable, source-cited answers with clear confidence scoring for researchers and inventors.',
                 items: ['Patentability Assessment', 'Filing Checklists', 'Compliance Reports', 'Export Market Analysis'],
                 color: 'from-emerald-500/20 to-emerald-500/5',
               },
-            ].map((stage, i) => (
-              <motion.div
-                key={i}
-                {...fadeInUp}
-                transition={{ delay: i * 0.15 }}
-                className={`relative group`}
-              >
-                {/* Connector Lines */}
-                {i < 2 && (
-                  <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-gradient-to-r from-primary/50 to-primary/0 transform -translate-y-1/2" />
-                )}
+            ].map((stage, i) => {
+              const IconComp = stage.icon;
+              return (
+                <motion.div
+                  key={i}
+                  {...fadeInUp}
+                  transition={{ delay: i * 0.15 }}
+                  className={`relative group`}
+                >
+                  {/* Connector Lines */}
+                  {i < 2 && (
+                    <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-0.5 bg-gradient-to-r from-primary/50 to-primary/0 transform -translate-y-1/2" />
+                  )}
 
-                <div className={`bg-gradient-to-br ${stage.color} border border-white/10 rounded-2xl p-8 backdrop-blur-sm hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 h-full`}>
-                  <div className="text-4xl mb-4">{stage.icon}</div>
-                  <h3 className="text-xl font-bold text-white mb-3">{stage.title}</h3>
-                  <p className="text-gray-300 mb-6 text-sm leading-relaxed">{stage.description}</p>
+                  <div className={`bg-gradient-to-br ${stage.color} border border-white/10 rounded-2xl p-8 backdrop-blur-sm hover:border-primary/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 h-full`}>
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-4 text-primary">
+                      <IconComp className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-3">{stage.title}</h3>
+                    <p className="text-gray-300 mb-6 text-sm leading-relaxed">{stage.description}</p>
 
-                  <div className="space-y-3 pt-6 border-t border-white/10">
-                    {stage.items.map((item, j) => (
-                      <motion.li
-                        key={j}
-                        initial={{ opacity: 0, x: -10 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ delay: j * 0.05 }}
-                        className="text-sm text-gray-300 flex items-center"
-                      >
-                        <span className="w-2 h-2 bg-primary rounded-full mr-3" />
-                        {item}
-                      </motion.li>
-                    ))}
+                    <div className="space-y-3 pt-6 border-t border-white/10">
+                      {stage.items.map((item, j) => (
+                        <motion.li
+                          key={j}
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          transition={{ delay: j * 0.05 }}
+                          className="text-sm text-gray-300 flex items-center"
+                        >
+                          <span className="w-2 h-2 bg-primary rounded-full mr-3" />
+                          {item}
+                        </motion.li>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         </div>
 
@@ -142,7 +147,7 @@ export default function FeaturesPage() {
           {[
             {
               role: 'Ayurvedic Practitioners & Vaidyas',
-              icon: '🌿',
+              icon: Leaf,
               color: 'border-emerald-500/30 bg-emerald-500/5',
               gradient: 'from-emerald-500/20 to-emerald-500/5',
               tasks: [
@@ -153,7 +158,7 @@ export default function FeaturesPage() {
             },
             {
               role: 'Pharma & Biotech Companies',
-              icon: '🧪',
+              icon: FlaskConical,
               color: 'border-blue-500/30 bg-blue-500/5',
               gradient: 'from-blue-500/20 to-blue-500/5',
               tasks: [
@@ -164,7 +169,7 @@ export default function FeaturesPage() {
             },
             {
               role: 'Researchers & Academic Institutions',
-              icon: '📚',
+              icon: BookOpen,
               color: 'border-purple-500/30 bg-purple-500/5',
               gradient: 'from-purple-500/20 to-purple-500/5',
               tasks: [
@@ -175,7 +180,7 @@ export default function FeaturesPage() {
             },
             {
               role: 'Regulatory & IP Consultants',
-              icon: '⚖️',
+              icon: Scale,
               color: 'border-amber-500/30 bg-amber-500/5',
               gradient: 'from-amber-500/20 to-amber-500/5',
               tasks: [
@@ -184,37 +189,42 @@ export default function FeaturesPage() {
                 'Streamline international export authorization reports',
               ],
             },
-          ].map((useCase, i) => (
-            <motion.div
-              key={i}
-              {...fadeInUp}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -8 }}
-              className={`group bg-gradient-to-br ${useCase.gradient} border ${useCase.color} rounded-2xl p-8 hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 overflow-hidden relative`}
-            >
-              {/* Animated background accent */}
-              <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-300" />
+          ].map((useCase, i) => {
+            const IconComp = useCase.icon;
+            return (
+              <motion.div
+                key={i}
+                {...fadeInUp}
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -8 }}
+                className={`group bg-gradient-to-br ${useCase.gradient} border ${useCase.color} rounded-2xl p-8 hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 overflow-hidden relative`}
+              >
+                {/* Animated background accent */}
+                <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-all duration-300" />
 
-              <div className="relative z-10">
-                <div className="text-5xl mb-4">{useCase.icon}</div>
-                <h3 className="text-xl font-bold text-white mb-6 group-hover:text-primary transition-colors">{useCase.role}</h3>
-                <ul className="space-y-4">
-                  {useCase.tasks.map((task, j) => (
-                    <motion.li
-                      key={j}
-                      initial={{ opacity: 0, x: -10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: j * 0.08 }}
-                      className="text-gray-300 text-sm flex items-start group/item"
-                    >
-                      <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3 shrink-0 group-hover/item:scale-125 transition-transform" />
-                      <span className="group-hover/item:text-white transition-colors">{task}</span>
-                    </motion.li>
-                  ))}
-                </ul>
-              </div>
-            </motion.div>
-          ))}
+                <div className="relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center mb-6 text-primary group-hover:scale-110 transition-transform">
+                    <IconComp className="w-7 h-7" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-6 group-hover:text-primary transition-colors">{useCase.role}</h3>
+                  <ul className="space-y-4">
+                    {useCase.tasks.map((task, j) => (
+                      <motion.li
+                        key={j}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ delay: j * 0.08 }}
+                        className="text-gray-300 text-sm flex items-start group/item"
+                      >
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3 shrink-0 group-hover/item:scale-125 transition-transform" />
+                        <span className="group-hover/item:text-white transition-colors">{task}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 

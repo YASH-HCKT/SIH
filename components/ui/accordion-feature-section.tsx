@@ -170,28 +170,6 @@ export const Feature197 = ({ features = defaultIPFeatures }: Feature197Props) =>
                   alt={activeFeature?.title || 'Feature preview'}
                   className="h-full w-full object-cover transition-all duration-500 hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                  {activeFeature ? (
-                    <>
-                      <div className="mb-2">
-                        <span className="text-xs font-semibold tracking-wider uppercase text-emerald-200">
-                          Feature {activeFeature.id} of {features.length}
-                        </span>
-                      </div>
-                      <h4 className="font-['Google_Sans'] text-xl font-medium text-white mb-2">
-                        {activeFeature.title.replace(/^\d+\.\s*/, '')}
-                      </h4>
-                      <p className="text-xs sm:text-sm text-gray-100 leading-relaxed max-w-lg">
-                        {activeFeature.description}
-                      </p>
-                    </>
-                  ) : (
-                    <div>
-                      <p className="text-xs text-gray-300">Select a feature on the left to view details</p>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           </div>
