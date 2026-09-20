@@ -35,6 +35,8 @@ export default function SamhitaPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedPart, setSelectedPart] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  const INITIAL_COUNT = 12;
 
   // Extract all unique plant parts across entries
   const allParts = useMemo(() => {
@@ -228,52 +230,80 @@ export default function SamhitaPage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {filteredEntries.map((entry) => (
-                <Link
-                  key={entry.slug}
-                  href={`/samhita/${entry.slug}`}
-                  className="group bg-[#FFFFFF] rounded-2xl border border-[#DADCE0] overflow-hidden samhita-card-shadow samhita-card-hover flex flex-col justify-between p-5"
-                >
-                  <div>
-                    {/* Thumbnail Image */}
-                    <div className="relative h-36 w-full rounded-xl overflow-hidden bg-[#F8F9FA] mb-4 border border-[#DADCE0]">
-                      <img
-                        src={entry.image}
-                        alt={`Botanical illustration of ${entry.scientificName}`}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
-                      <div className="absolute top-2 left-2 bg-[#FFFFFF]/90 px-2 py-0.5 rounded-full text-[10px] font-bold text-[#2D5A3F] border border-[#DADCE0]">
-                        {entry.category}
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {(showAll || searchQuery || selectedCategory || selectedPart
+                  ? filteredEntries
+                  : filteredEntries.slice(0, INITIAL_COUNT)
+                ).map((entry) => (
+                  <Link
+                    key={entry.slug}
+                    href={`/samhita/${entry.slug}`}
+                    className="group bg-[#FFFFFF] rounded-2xl border border-[#DADCE0] overflow-hidden samhita-card-shadow samhita-card-hover flex flex-col justify-between p-5"
+                  >
+                    <div>
+                      {/* Thumbnail Image */}
+                      <div className="relative h-36 w-full rounded-xl overflow-hidden bg-[#F8F9FA] mb-4 border border-[#DADCE0]">
+                        <img
+                          src={entry.image}
+                          alt={`Botanical illustration of ${entry.scientificName}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                        <div className="absolute top-2 left-2 bg-[#FFFFFF]/90 px-2 py-0.5 rounded-full text-[10px] font-bold text-[#2D5A3F] border border-[#DADCE0]">
+                          {entry.category}
+                        </div>
                       </div>
+
+                      <div className="text-[11px] font-medium text-[#477A5B] italic truncate mb-0.5">
+                        {entry.scientificName}
+                      </div>
+                      <h3 className="text-base font-bold text-[#202124] group-hover:text-[#477A5B] transition-colors truncate mb-1.5">
+                        {entry.commonName}
+                      </h3>
+                      <p className="text-xs text-[#5F6368] line-clamp-2 mb-3 leading-relaxed">
+                        {entry.traditionalContext}
+                      </p>
                     </div>
 
-                    <div className="text-[11px] font-medium text-[#477A5B] italic truncate mb-0.5">
-                      {entry.scientificName}
+                    <div className="pt-3 border-t border-[#DADCE0] flex items-center justify-between text-[11px]">
+                      <span className="text-[#3C4043] font-medium">
+                        {entry.partsUsed.slice(0, 2).join(', ')}
+                      </span>
+                      <span className="font-bold text-[#477A5B] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                        Explore <ArrowRight className="w-3 h-3" />
+                      </span>
                     </div>
-                    <h3 className="text-base font-bold text-[#202124] group-hover:text-[#477A5B] transition-colors truncate mb-1.5">
-                      {entry.commonName}
-                    </h3>
-                    <p className="text-xs text-[#5F6368] line-clamp-2 mb-3 leading-relaxed">
-                      {entry.traditionalContext}
-                    </p>
-                  </div>
+                  </Link>
+                ))}
+              </div>
 
-                  <div className="pt-3 border-t border-[#DADCE0] flex items-center justify-between text-[11px]">
-                    <span className="text-[#3C4043] font-medium">
-                      {entry.partsUsed.slice(0, 2).join(', ')}
-                    </span>
-                    <span className="font-bold text-[#477A5B] group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
-                      Explore <ArrowRight className="w-3 h-3" />
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+              {/* View More / Show Less button */}
+              {!searchQuery && !selectedCategory && !selectedPart && filteredEntries.length > INITIAL_COUNT && (
+                <div className="mt-10 text-center">
+                  <button
+                    onClick={() => setShowAll((prev) => !prev)}
+                    className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl border-2 border-[#477A5B] text-[#477A5B] font-semibold text-sm hover:bg-[#477A5B] hover:text-white transition-all duration-200 group"
+                  >
+                    {showAll ? (
+                      <>Show Less</>
+                    ) : (
+                      <>
+                        View More
+                        <span className="px-2 py-0.5 rounded-full bg-[#E8F0E9] text-[#2D5A3F] text-xs font-bold group-hover:bg-white/20 group-hover:text-white transition-colors">
+                          +{filteredEntries.length - INITIAL_COUNT} more
+                        </span>
+                      </>
+                    )}
+                    <ArrowRight className={`w-4 h-4 transition-transform duration-200 ${showAll ? 'rotate-90' : ''}`} />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </section>
+
 
       {/* 2. FEATURED AYURVEDA ENTRIES SECTION */}
       <section className="py-16 bg-[#FFFFFF] border-b border-[#DADCE0]">
