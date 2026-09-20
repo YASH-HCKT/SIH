@@ -24,7 +24,7 @@ export const defaultIPFeatures: FeatureItem[] = [
   {
     id: 1,
     title: '1. AI Assistant',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmVkNtcbwHZ3NFj7GglwniEH61ADvNVmAAiWEMMLrd9w&s=10',
+    image: '/ai-assistant.jpg',
     description:
       'The central conversational interface of IP-SAKTI. Users can ask questions about Ayurvedic innovations, intellectual property, patents, regulations, traditional knowledge, and related topics in natural language.',
   },
