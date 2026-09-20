@@ -3,6 +3,7 @@
 import { motion, useInView } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useRef } from 'react';
+import Link from 'next/link';
 
 /* ---------------- WordsPullUp ---------------- */
 interface WordsPullUpProps {
@@ -145,17 +146,22 @@ const IPSaktiHero = () => {
                 across national and international regimes.
               </motion.p>
 
-              <motion.button
+              <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                className="group inline-flex items-center gap-2 self-start rounded-full bg-primary py-1 pl-5 pr-1 text-sm font-medium text-primary-foreground transition-all hover:gap-3 sm:text-base"
+                className="self-start"
               >
-                Explore the Platform
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-10 sm:w-10">
-                  <ArrowRight className="h-4 w-4" style={{ color: '#000000' }} />
-                </span>
-              </motion.button>
+                <Link
+                  href="/samhita"
+                  className="group inline-flex items-center gap-2 rounded-full bg-primary py-1 pl-5 pr-1 text-sm font-medium text-primary-foreground transition-all hover:gap-3 sm:text-base"
+                >
+                  Explore the Platform
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black transition-transform group-hover:scale-110 sm:h-10 sm:w-10">
+                    <ArrowRight className="h-4 w-4" style={{ color: '#000000' }} />
+                  </span>
+                </Link>
+              </motion.div>
             </div>
           </div>
         </div>

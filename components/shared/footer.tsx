@@ -16,7 +16,7 @@ export const Footer = () => {
         >
           IP - SAKTI
         </div>
-        <p>.</p>
+        <p><i>Where Ancient Wisdom Meets Intelligent Technology.</i></p>
         <div className="footer-links">
           <a
             href="https://www.facebook.com/AEC1998"
@@ -164,9 +164,9 @@ export const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-emerald-700 transition-colors">
+                <Link href="/#faq" className="hover:text-emerald-700 transition-colors">
                   FAQ
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -177,10 +177,15 @@ export const Footer = () => {
               Contact
             </h3>
             <div className="space-y-3 text-sm text-gray-700">
-              <div className="flex items-center space-x-2">
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=Asansol,+West+Bengal,+India"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 hover:text-emerald-700 transition-colors"
+              >
                 <MapPin size={16} />
                 <span>Asansol, West Bengal, India</span>
-              </div>
+              </a>
               <div className="flex items-center space-x-2">
                 <Mail size={16} />
                 <a href="mailto:team@ip-sakti.com" className="hover:text-emerald-700 transition-colors">

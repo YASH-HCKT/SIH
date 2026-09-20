@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import {
   Accordion,
   AccordionContent,
@@ -19,6 +20,7 @@ interface FAQSectionProps {
   subtitle?: string;
   description?: string;
   buttonLabel?: string;
+  buttonHref?: string;
   onButtonClick?: () => void;
   faqsLeft: FAQItem[];
   faqsRight: FAQItem[];
@@ -30,26 +32,29 @@ export function FAQSection({
   subtitle = 'Frequently Asked Questions',
   description = 'Get instant answers to key questions about patent eligibility, TKDL prior art, AYUSH compliance, and international IP regulations.',
   buttonLabel = 'Ask AI Assistant →',
+  buttonHref = '/chat#chat-input',
   onButtonClick,
   faqsLeft,
   faqsRight,
   className,
 }: FAQSectionProps) {
   return (
-    <section className={cn('w-full max-w-5xl mx-auto py-16 px-4 text-white', className)}>
+    <section id="faq" className={cn('w-full max-w-5xl mx-auto py-16 px-4 text-white scroll-mt-20', className)}>
       {/* Header */}
       <div className="text-center mb-10">
         <p className="text-sm text-primary font-medium tracking-wide mb-2">{subtitle}</p>
         <h2 className="text-3xl md:text-4xl font-bold mb-3 text-white">{title}</h2>
         <p className="text-gray-400 max-w-xl mx-auto mb-6 text-sm md:text-base">{description}</p>
         {buttonLabel && (
-          <Button
-            variant="default"
-            className="rounded-full bg-primary text-primary-foreground text-lg font-semibold hover:bg-primary/90 transition-colors px-6"
-            onClick={onButtonClick}
-          >
-            {buttonLabel}
-          </Button>
+          <Link href={buttonHref}>
+            <Button
+              variant="default"
+              className="rounded-full bg-primary text-primary-foreground text-lg font-semibold hover:bg-primary/90 transition-colors px-6"
+              onClick={onButtonClick}
+            >
+              {buttonLabel}
+            </Button>
+          </Link>
         )}
       </div>
 

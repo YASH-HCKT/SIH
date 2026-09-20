@@ -8,6 +8,7 @@ import { User, LogIn, UserPlus, ShieldCheck } from 'lucide-react';
 const navItems = [
   { label: 'Home', href: '/' },
   { label: 'AI Assistant', href: '/chat' },
+  { label: 'Samhita', href: '/samhita' },
   { label: 'Features', href: '/features' },
   { label: 'How It Works', href: '/how-it-works' },
   { label: 'About', href: '/about' },
@@ -40,11 +41,10 @@ export const FloatingNavbar = () => {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`text-[11px] sm:text-xs md:text-sm font-medium transition-all ${
-                  isActive
+                className={`text-[11px] sm:text-xs md:text-sm font-medium transition-all ${isActive
                     ? 'text-primary font-semibold border-b border-primary'
                     : 'text-emerald-950/60 hover:text-primary'
-                }`}
+                  }`}
               >
                 {item.label}
               </Link>

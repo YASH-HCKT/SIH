@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   ArrowUpIcon,
@@ -145,17 +147,20 @@ function Composer({
   onChange,
   onSubmit,
   status,
+  inputRef,
 }: {
   value: string;
   onChange: (value: string) => void;
   onSubmit: (value: string) => void;
   status: SendStatus;
+  inputRef?: React.RefObject<HTMLTextAreaElement | null>;
 }) {
   const busy = status === 'loading';
   const canSend = value.trim().length > 0 && !busy;
   return (
-    <div className="rounded-2xl border border-emerald-900/15 bg-white p-2 shadow-lg shadow-emerald-950/5">
+    <div id="chat-input" className="rounded-2xl border border-emerald-900/15 bg-white p-2 shadow-lg shadow-emerald-950/5 scroll-mt-24">
       <textarea
+        ref={inputRef}
         value={value}
         disabled={busy}
         rows={2}
@@ -210,13 +215,49 @@ function Composer({
   );
 }
 
-export default function ChatPage() {
-  const [messages, setMessages] = React.useState<Message[]>(DEMO_MESSAGES);
+function ChatContent() {
+  const searchParams = useSearchParams();
+  const contextParam = searchParams ? searchParams.get('context') : null;
+
+  const initialMessages: Message[] = React.useMemo(() => {
+    if (contextParam) {
+      return [
+        {
+          id: '1',
+          role: 'assistant',
+          content: `Namaste. I am Sahayak. I see you are exploring ${contextParam} from the Samhita Knowledge Repository.`,
+          confidence: 'high',
+          citations: ['Samhita Knowledge Repository', 'TKDL Digital Database'],
+          timestamp: new Date(),
+        },
+        {
+          id: '2',
+          role: 'assistant',
+          content: `How can I help evaluate prior art, Section 3(p) compliance, or bioactive extract patentability for ${contextParam}?`,
+          confidence: 'high',
+          citations: [],
+          timestamp: new Date(),
+        },
+      ];
+    }
+    return DEMO_MESSAGES;
+  }, [contextParam]);
+
+  const [messages, setMessages] = React.useState<Message[]>(initialMessages);
   const [inputValue, setInputValue] = React.useState('');
   const [status, setStatus] = React.useState<SendStatus>('idle');
   const [isLoading, setIsLoading] = React.useState(false);
   const messagesEndRef = React.useRef<HTMLDivElement | null>(null);
-  const previousMessageCount = React.useRef(DEMO_MESSAGES.length);
+  const previousMessageCount = React.useRef(initialMessages.length);
+  const inputRef = React.useRef<HTMLTextAreaElement | null>(null);
+
+  React.useEffect(() => {
+    // Focus keyboard input area on load
+    inputRef.current?.focus();
+    if (window.location.hash === '#chat-input') {
+      inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, []);
 
   React.useEffect(() => {
     if (messages.length > previousMessageCount.current) {
@@ -350,6 +391,7 @@ export default function ChatPage() {
               onChange={setInputValue}
               onSubmit={handleSubmit}
               status={status}
+              inputRef={inputRef}
             />
             <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[11px] text-emerald-950/45">
               <ShieldCheckIcon className="size-3.5" />
@@ -361,3 +403,12 @@ export default function ChatPage() {
     </main>
   );
 }
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f7faf7] pt-24 text-center">Loading Chat...</div>}>
+      <ChatContent />
+    </Suspense>
+  );
+}
+
