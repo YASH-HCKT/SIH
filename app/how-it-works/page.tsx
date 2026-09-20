@@ -179,7 +179,19 @@ export default function HowItWorks() {
         <div className="mx-auto max-w-4xl">
           <motion.div {...fadeInUp} className="mb-12 text-center"><p className="text-xs font-bold uppercase tracking-[0.22em] text-[#2f855a]">Good to know</p><h2 className="mt-4 text-4xl font-semibold tracking-[-0.04em] sm:text-5xl">Questions, answered.</h2></motion.div>
           <div className="grid gap-4 md:grid-cols-2">{faqs.map((faq, i) => <motion.div key={faq.q} {...fadeInUp} transition={{ delay: i * 0.06 }} className="rounded-2xl border border-[#173b2b]/10 bg-white p-6"><h3 className="text-base font-semibold leading-6">{faq.q}</h3><p className="mt-3 text-sm leading-6 text-[#173b2b]/60">{faq.a}</p></motion.div>)}</div>
-          <motion.div {...fadeInUp} className="mt-12 flex flex-col items-center justify-between gap-5 rounded-3xl bg-[#173b2b] p-8 text-center text-white sm:flex-row sm:p-10 sm:text-left"><div><p className="text-2xl font-semibold">Ready to explore your next step?</p><p className="mt-2 text-sm text-white/60">Bring your question. We’ll help you find the signal.</p></div><a href="/chat" className="group inline-flex shrink-0 items-center gap-3 rounded-full bg-[#b7dfbf] px-5 py-3 text-sm font-bold text-[#173b2b] transition-transform hover:-translate-y-0.5">Start a conversation <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></a></motion.div>
+          <motion.div {...fadeInUp} className="mt-12 flex flex-col items-center justify-between gap-5 rounded-3xl bg-[#173b2b] p-8 text-center text-white sm:flex-row sm:p-10 sm:text-left">
+            <div>
+              <p className="text-2xl font-semibold !text-white" style={{ color: '#ffffff' }}>
+                Ready to explore your next step?
+              </p>
+              <p className="mt-2 text-sm" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>
+                Bring your question. We’ll help you find the signal.
+              </p>
+            </div>
+            <a href="/chat" className="group inline-flex shrink-0 items-center gap-3 rounded-full bg-[#b7dfbf] px-5 py-3 text-sm font-bold text-[#173b2b] transition-transform hover:-translate-y-0.5">
+              Start a conversation <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </a>
+          </motion.div>
         </div>
       </section>
     </div>
