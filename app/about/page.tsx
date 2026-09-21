@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from 'lucide-react';
+import Contact16 from '@/components/ui/contact-16';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 18 },
@@ -151,6 +152,9 @@ export default function About() {
           <p className="mt-8 text-xs text-white/50">Built for Smart India Hackathon 2026 · Problem Statement SIH26045 · Ministry of Ayush</p>
         </motion.div>
       </section>
+
+      {/* Direct Email Contact Section */}
+      <Contact16 />
     </div>
   );
 }

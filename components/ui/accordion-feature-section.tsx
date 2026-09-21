@@ -24,14 +24,14 @@ export const defaultIPFeatures: FeatureItem[] = [
   {
     id: 1,
     title: '1. AI Assistant',
-    image: '/ai-assistant.jpg',
+    image: 'https://www.webopedia.com/wp-content/uploads/2024/11/ai-assistant-cover.webp',
     description:
       'The central conversational interface of IP-SAKTI. Users can ask questions about Ayurvedic innovations, intellectual property, patents, regulations, traditional knowledge, and related topics in natural language.',
   },
   {
     id: 2,
     title: '2. RAG Knowledge Retrieval',
-    image: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images-cdn.reedsy.com/discovery/post/161/featured_image/large_63bb3b8666ac24fd07d058123841c1b1f1c65a9b.jpg',
     description:
       'Retrieves relevant information from curated IP, regulatory, Ayurveda, and traditional-knowledge sources before generating an answer, keeping responses grounded in available evidence.',
   },
@@ -59,14 +59,14 @@ export const defaultIPFeatures: FeatureItem[] = [
   {
     id: 6,
     title: '6. Traditional Knowledge & Prior-Art',
-    image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://images.unsplash.com/photo-1491841651911-c44c30c34548?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGNsYXNzaWMlMjBib29rc3xlbnwwfHwwfHx8MA%3D%3D',
     description:
       'Helps users explore existing traditional Ayurvedic knowledge and prior-art information relevant to an innovation, supporting novelty and TKDL prior-art assessment.',
   },
   {
     id: 7,
     title: '7. Source-Cited Intelligence',
-    image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://cdn.pixabay.com/photo/2019/08/06/22/48/artificial-intelligence-4389372_1280.jpg',
     description:
       'Provides answers supported by identifiable sources, citations, and official references, allowing users to trace important information back to underlying legal and classical knowledge.',
   },
@@ -87,7 +87,7 @@ export const defaultIPFeatures: FeatureItem[] = [
   {
     id: 10,
     title: '10. Multilingual & Jurisdiction Intelligence',
-    image: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=1000&auto=format&fit=crop',
+    image: 'https://img.magnific.com/free-vector/world-map-with-global-technology-social-connection-network-with-nodes-links-vector-illustration_1284-1968.jpg?semt=ais_hybrid&w=740&q=80',
     description:
       'Helps users access IP and regulatory guidance across supported languages while distinguishing between Indian and international jurisdictions, reducing the risk of mixing legal frameworks.',
   },

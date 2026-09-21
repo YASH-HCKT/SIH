@@ -27,6 +27,7 @@ import {
   GraduationCap,
 } from 'lucide-react';
 import { SAMHITA_CATEGORIES, SAMHITA_ENTRIES } from '@/lib/samhita-data';
+import { LegalIpKnowledgeSection } from '@/components/ui/legal-ip-knowledge';
 
 // 6 Featured Herbs
 const FEATURED_SLUGS = ['ashwagandha', 'tulsi', 'neem', 'turmeric', 'amla', 'brahmi'];
@@ -489,6 +490,9 @@ export default function SamhitaPage() {
           </div>
         </div>
       </section>
+
+      {/* 4. LEGAL, IP & BENEFIT-SHARING KNOWLEDGE REPOSITORY */}
+      <LegalIpKnowledgeSection />
 
       {/* ASK IP-SAKTI INTEGRATION CTA */}
       <section className="py-16 bg-[#FFFFFF]">

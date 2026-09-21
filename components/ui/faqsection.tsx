@@ -38,6 +38,8 @@ export function FAQSection({
   faqsRight,
   className,
 }: FAQSectionProps) {
+  const maxRows = Math.max(faqsLeft.length, faqsRight.length);
+
   return (
     <section id="faq" className={cn('w-full max-w-5xl mx-auto py-16 px-4 text-white scroll-mt-20', className)}>
       {/* Header */}
@@ -58,28 +60,50 @@ export function FAQSection({
         )}
       </div>
 
-      {/* FAQs Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-        {[faqsLeft, faqsRight].map((faqColumn, columnIndex) => (
-          <Accordion key={columnIndex} type="single" collapsible className="space-y-4">
-            {faqColumn.map((faq, i) => (
-              <AccordionItem
-                key={i}
-                value={`item-${columnIndex}-${i}`}
-                className="border-b border-white/10"
-              >
-                <AccordionTrigger className="text-base font-medium text-white hover:text-primary">
-                  {faq.question}
-                </AccordionTrigger>
-                <AccordionContent className="text-sm text-gray-300 leading-relaxed">
-                  <div className="min-h-[40px] transition-all duration-200 ease-in-out py-1">
-                    {faq.answer}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        ))}
+      {/* FAQs — row-by-row so left & right questions always share the same row height */}
+      <div className="flex flex-col border-t border-white/10">
+        {Array.from({ length: maxRows }).map((_, rowIndex) => {
+          const leftFaq = faqsLeft[rowIndex];
+          const rightFaq = faqsRight[rowIndex];
+          return (
+            <div
+              key={rowIndex}
+              className="grid grid-cols-1 md:grid-cols-2 border-b border-white/10"
+            >
+              {/* Left FAQ */}
+              <div className="md:border-r md:border-white/10 md:pr-8 py-5 flex flex-col justify-center min-h-[72px]">
+                {leftFaq ? (
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value={`left-${rowIndex}`} className="border-none">
+                      <AccordionTrigger className="text-base font-medium text-white hover:text-primary py-0 text-left">
+                        {leftFaq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-sm text-gray-300 leading-relaxed pt-3 pb-0">
+                        {leftFaq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                ) : null}
+              </div>
+
+              {/* Right FAQ */}
+              <div className="md:pl-8 py-5 flex flex-col justify-center min-h-[72px]">
+                {rightFaq ? (
+                  <Accordion type="single" collapsible>
+                    <AccordionItem value={`right-${rowIndex}`} className="border-none">
+                      <AccordionTrigger className="text-base font-medium text-white hover:text-primary py-0 text-left">
+                        {rightFaq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-sm text-gray-300 leading-relaxed pt-3 pb-0">
+                        {rightFaq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

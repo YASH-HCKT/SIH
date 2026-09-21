@@ -1,6 +1,7 @@
 import { IPSaktiHero } from '@/components/ui/prisma-hero';
 import { FAQSection } from '@/components/ui/faqsection';
-import Link from 'next/link';
+import { HistoricalHeritageSection } from '@/components/ui/historical-heritage';
+import Contact16 from '@/components/ui/contact-16';
 
 const ayushFaqsLeft = [
   {
@@ -86,7 +87,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ Section (Added directly after Stats section) */}
+      {/* Heritage Section: Those Who Shaped the Tradition */}
+      <HistoricalHeritageSection />
+
+      {/* FAQ Section */}
       <FAQSection
         title="Ayurveda IP & Regulatory FAQs"
         subtitle="Frequently Asked Questions"
@@ -96,24 +100,10 @@ export default function Home() {
         faqsRight={ayushFaqsRight}
       />
 
-      {/* CTA Section */}
-      <section className="bg-gradient-to-b from-black to-slate-950 py-16 md:py-24 border-t border-white/10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-            Protect Your Ayurveda IP Today
-          </h2>
-          <p className="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">
-            Get instant guidance on intellectual property protection, regulatory compliance, and
-            internationalization strategies for your Ayurveda products.
-          </p>
-          <Link
-            href="/chat"
-            className="px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition-colors inline-block shadow-lg"
-          >
-            Start Free Analysis
-          </Link>
-        </div>
-      </section>
+      {/* Contact Section (Replaces 'Protect Your Ayurveda IP Today' CTA section) */}
+      <div className="py-12 border-t border-white/10">
+        <Contact16 />
+      </div>
     </div>
   );
 }
